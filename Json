@@ -1,0 +1,33 @@
+{
+  "qubist_config": {
+    "version": "2.0.0",
+    "quantum_mode": true,
+    "entanglement_level": 0.85,
+    "superposition_states": ["|minando⟩", "|analizando⟩", "|midiendo⟩"],
+   
+    "blockchain": {
+      "file": "mirror_chain.jsonl",
+      "target_hash": "0000",
+      "reward": 50.0,
+      "quantum_secure": true
+    },
+   
+    "agents": {
+      "ledger_file": "agents_ledger.json",
+      "default_balance": 0.0,
+      "quantum_ai": true
+    },
+   
+    "energy_sensor": {
+      "interval": 5,
+      "quantum_fluctuations": true,
+      "zero_point_energy": true
+    },
+   
+    "execution_modes": {
+      "sequential": false,
+      "parallel_quantum": true,
+      "decoherence_timeout": 30
+    }
+  }
+}
