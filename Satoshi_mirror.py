@@ -19,7 +19,7 @@ class UnifiedConfig:
         self.config = self.load_config()
        
     def load_config(self) -> Dict:
-        config_path = self.root_dir / "qubist_config.json"
+        config_path = self.root_dir / "Qubist_config.json"
         if config_path.exists():
             with open(config_path) as f:
                 return json.load(f)
@@ -47,7 +47,7 @@ class UnifiedConfig:
         }
    
     def save_config(self):
-        config_path = self.root_dir / "qubist_config.json"
+        config_path = self.root_dir / "Qubist_config.json"
         with open(config_path, 'w') as f:
             json.dump(self.config, f, indent=2)
 
