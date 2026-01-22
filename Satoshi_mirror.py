@@ -20,6 +20,7 @@ class UnifiedConfig:
         self.data = self.load_config()
         self.bridge = self.data["satoshi_mirror"]
         self.qubist = self.data.get("qubist_config", {})
+        self.config = self.bridge
 
     def _merge_defaults(self, config: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
         merged = dict(config)
@@ -88,7 +89,8 @@ class UnifiedConfig:
    
     def save_config(self):
         self.data["satoshi_mirror"] = self.bridge
-        with open(self.config_path, 'w') as f:
+        config_path = self.config_path
+        with open(config_path, 'w') as f:
             json.dump(self.data, f, indent=2)
 
 # ==================== PYTHON SCRIPT RUNNER ====================
