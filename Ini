@@ -1,0 +1,16 @@
+[Unit]
+Description=Satoshi Mirror Quantum Bridge
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=$USER
+WorkingDirectory=/home/$USER/SatoshiMirror
+ExecStart=/home/$USER/SatoshiMirror/satoshi_mirror.py quantum-synthesis
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
