@@ -81,7 +81,11 @@ class UnifiedConfig:
         if self.config_path.exists():
             with open(self.config_path) as f:
                 raw_config = json.load(f)
-        merged_bridge = self._merge_defaults(raw_config.get("satoshi_mirror", {}), defaults)
+        bridge_config = raw_config.get("satoshi_mirror", {})
+        if "python_scripts" not in bridge_config and "python_layer" in bridge_config:
+            bridge_config = dict(bridge_config)
+            bridge_config["python_scripts"] = bridge_config.get("python_layer", {}).get("scripts", {})
+        merged_bridge = self._merge_defaults(bridge_config, defaults)
         return {
             "satoshi_mirror": merged_bridge,
             "qubist_config": raw_config.get("qubist_config", {})
