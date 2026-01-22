@@ -1,33 +1,33 @@
 
 #!/bin/bash
-# deploy_satoshi_mirror.sh - Despliegue completo Python + C++
+# deploy_satoshi_mirror.sh - Full deployment Python + C++
 
-echo "🚀 DESPLIEGUE SATOSHI MIRROR QUANTUM BRIDGE"
+echo "🚀 SATOSHI MIRROR QUANTUM BRIDGE DEPLOYMENT"
 echo "==========================================="
 
-# 1. Crear estructura de directorios
-echo "[1] Creando estructura de directorios..."
+# 1. Create directory structure
+echo "[1] Creating directory structure..."
 mkdir -p {quantum,cyberpunk,temporal,data,logs,miner,retro,report}
 
-# 2. Instalar dependencias Python
-echo "[2] Instalando dependencias Python..."
+# 2. Install Python dependencies
+echo "[2] Installing Python dependencies..."
 pip install requests
 
-# 3. Compilar núcleo Qubist-C++
-echo "[3] Compilando núcleo Qubist-C++..."
+# 3. Compile Qubist-C++ core
+echo "[3] Compiling Qubist-C++ core..."
 if [ -f "Makefile" ]; then
     make qubist
     if [ $? -eq 0 ]; then
-        echo "✅ Núcleo Qubist-C++ compilado"
+        echo "✅ Qubist-C++ core compiled"
     else
-        echo "⚠️  No se pudo compilar Qubist-C++. Continuando modo Python-only."
+        echo "⚠️  Failed to compile Qubist-C++. Continuing in Python-only mode."
     fi
 else
-    echo "ℹ️  Makefile no encontrado. Modo Python-only."
+    echo "ℹ️  Makefile not found. Python-only mode."
 fi
 
-# 4. Crear archivos de configuración
-echo "[4] Creando archivos de configuración..."
+# 4. Create configuration files
+echo "[4] Creating configuration files..."
 
 # Quantum Bridge Config
 if [ ! -f "Quantum_bridge_confite.json" ]; then
@@ -55,12 +55,12 @@ cat > Quantum_bridge_confite.json << 'EOF'
 EOF
 fi
 
-# 5. Inicializar blockchain
-echo "[5] Inicializando blockchain espejo..."
+# 5. Initialize blockchain
+echo "[5] Initializing mirror blockchain..."
 python3 Satoshi_mirror.py mine 5
 
-# 6. Crear identidad retro
-echo "[6] Creando identidad retro..."
+# 6. Create retro identity
+echo "[6] Creating retro identity..."
 if [ ! -f "retro_identity.json" ]; then
     cat > retro_identity.json << 'EOF'
 {
@@ -69,31 +69,31 @@ if [ ! -f "retro_identity.json" ]; then
   "created_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 }
 EOF
-    echo "✅ Identidad retro creada"
+    echo "✅ Retro identity created"
 fi
 
-# 7. Hacer ejecutables
-echo "[7] Haciendo scripts ejecutables..."
+# 7. Make scripts executable
+echo "[7] Making scripts executable..."
 chmod +x Satoshi_mirror.py
 chmod +x miner/*.py retro/*.py report/*.py 2>/dev/null || true
 
-# 8. Ejecutar síntesis inicial
-echo "[8] Ejecutando síntesis cuántica inicial..."
+# 8. Run initial synthesis
+echo "[8] Running initial quantum synthesis..."
 python3 Satoshi_mirror.py quantum-synthesis
 
 echo ""
 echo "==========================================="
-echo "✅ DESPLIEGUE COMPLETADO"
+echo "✅ DEPLOYMENT COMPLETE"
 echo ""
-echo "📊 COMANDOS DISPONIBLES:"
+echo "📊 AVAILABLE COMMANDS:"
 echo "   python3 Satoshi_mirror.py mine 10"
 echo "   python3 Satoshi_mirror.py retro 2009-01-03 https://bitcoin.org --wormhole"
 echo "   python3 Satoshi_mirror.py quantum-synthesis"
 echo "   python3 Satoshi_mirror.py status"
 echo ""
-echo "🔧 CONFIGURACIÓN:"
-echo "   - Directorios de scripts: miner/, retro/, report/"
-echo "   - Núcleo C++: satoshi_mirror (si compilado)"
-echo "   - Configuración: Quantum_bridge_confite.json"
+echo "🔧 CONFIGURATION:"
+echo "   - Script directories: miner/, retro/, report/"
+echo "   - C++ core: satoshi_mirror (if compiled)"
+echo "   - Configuration: Quantum_bridge_confite.json"
 echo ""
-echo "🌌 SATOSHI MIRROR QUANTUM BRIDGE ACTIVO"
+echo "🌌 SATOSHI MIRROR QUANTUM BRIDGE ACTIVE"

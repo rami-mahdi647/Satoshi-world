@@ -23,18 +23,18 @@ Example taken from `Satoshi_mirror.py` that executes a Python script with argume
 
 ```python
 def run_script(self, script_name: str, args: List[str] = None) -> Dict:
-    """Ejecuta un script Python y devuelve resultados"""
+    """Runs a Python script and returns results"""
     if args is None:
         args = []
 
     script_path = self.root / self.config.config["python_scripts"].get(script_name)
     if not script_path.exists():
-        return {"error": f"Script {script_name} no encontrado"}
+        return {"error": f"Script {script_name} not found"}
 
-    # Construir comando
+    # Build command
     cmd = [sys.executable, str(script_path)] + args
 
-    # Ejecutar
+    # Run
     result = subprocess.run(
         cmd,
         capture_output=True,
@@ -102,10 +102,10 @@ qfunc mine_block(QubistInt difficulty = 4) -> QubistDict {
     std::ofstream chain(chain_file, std::ios::app);
     chain << json::dump(block) << std::endl;
 
-    std::cout << "⛏️  Bloque cuántico #" << current_height << " minado" << std::endl;
+    std::cout << "⛏️  Quantum block #" << current_height << " mined" << std::endl;
     std::cout << "   Hash: " << block_hash.substr(0, 32) << "..." << std::endl;
-    std::cout << "   Nonce: " << nonce << " | Tiempo: " << duration << "s" << std::endl;
-    std::cout << "   Recompensa: " << block_reward << " BTC espejo" << std::endl;
+    std::cout << "   Nonce: " << nonce << " | Time: " << duration << "s" << std::endl;
+    std::cout << "   Reward: " << block_reward << " mirror BTC" << std::endl;
 
     EC_KEY_free(key);
     return block;
