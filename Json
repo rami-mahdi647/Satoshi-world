@@ -1,0 +1,43 @@
+{
+  "quantum_bridge_config": {
+    "version": "3.0.0",
+    "bridge_mode": "hybrid",
+   
+    "python_layer": {
+      "scripts": {
+        "export_report": "export_report.py",
+        "mirror_miner": "mirror_miner.py",
+        "mirror_supply": "mirror_supply.py",
+        "retro_pastnet": "retro_pastnet.py",
+        "show_chain": "show_chain.py",
+        "show_mirror_chain": "show_mirror_chain.py"
+      },
+      "requirements": ["requests"]
+    },
+   
+    "qubist_layer": {
+      "binary": "satoshi_mirror",
+      "modes": ["mine", "ai_cycle", "energy", "quantum_synthesis"],
+      "source_file": "satoshi_mirror.qub.cpp",
+      "make_target": "qubist"
+    },
+   
+    "data_sync": {
+      "mirror_chain": {
+        "python": "mirror_chain.jsonl",
+        "qubist": "data/mirror_chain.quantum.jsonl",
+        "sync_strategy": "bidirectional"
+      },
+      "retro_chain": {
+        "python": "retro_chain.jsonl",
+        "qubist": "data/retro_chain.quantum.jsonl",
+        "sync_strategy": "python_to_qubist"
+      }
+    },
+   
+    "execution_modes": {
+      "default": "python",
+      "high_performance": "qubist",
+      "quantum_synthesis": "hybrid"
+    }
+  }
