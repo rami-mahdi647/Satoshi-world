@@ -1,5 +1,5 @@
-# Makefile para Satoshi Mirror Quantum Engine
-# Ejecutar: make qubist
+# Makefile for Satoshi Mirror Quantum Engine
+# Run: make qubist
 
 CXX = g++
 CXXFLAGS = -std=c++20 -O3 -march=native -pthread
@@ -14,14 +14,14 @@ QUBIST_TARGET = satoshi_mirror
 all: qubist
 
 qubist: $(QUBIST_SOURCES)
-@echo "🔧 Compilando núcleo Qubist-C++..."
+@echo "🔧 Compiling Qubist-C++ core..."
 $(CXX) $(CXXFLAGS) -o $(QUBIST_TARGET) $(QUBIST_SOURCES) $(LDFLAGS)
-@echo "✅ Compilación completada: ./$(QUBIST_TARGET)"
+@echo "✅ Compilation completed: ./$(QUBIST_TARGET)"
 
 run: qubist
-@echo "🚀 Ejecutando síntesis cuántica..."
+@echo "🚀 Running quantum synthesis..."
 ./$(QUBIST_TARGET) quantum_synthesis
 
 clean:
 rm -f $(QUBIST_TARGET) *.o
-@echo "🧹 Limpieza completada"
+@echo "🧹 Cleanup completed"

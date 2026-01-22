@@ -1,6 +1,6 @@
 // ===========================================================================
 // QUBIST-C++ UNIFIED SATOSHI MIRROR ENGINE
-// Fusiona: add_rami_bot.py + agents_ia_cycle.py + agents_iterate.py +
+// Fuses: add_rami_bot.py + agents_ia_cycle.py + agents_iterate.py +
 //          energy_sensor_client.py + mirror_miner.py + mirror_suply.py
 // ===========================================================================
 // Qubist Language Syntax: C++ meets Python with Quantum-inspired patterns
@@ -51,14 +51,14 @@ public:
                         {"name", "Satoshi Mirror Bot"},
                         {"balance_btc_mirror", 0.0},
                         {"ai_unlocked", false},
-                        {"description", "Bot centrado en minería espejo y economía temprana."}
+                        {"description", "Bot focused on mirror mining and early economy."}
                     },
                     {
                         {"id", "bot_archivist_2009"},
                         {"name", "Archivist 2009"},
                         {"balance_btc_mirror", 275.0},
                         {"ai_unlocked", true},
-                        {"description", "Bot encargado de leer y sintetizar conocimiento de bitcoin.org 2009."}
+                        {"description", "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009."}
                     }
                 }}
             };
@@ -71,7 +71,7 @@ public:
        
         for (auto& agent : ledger_data["agents"]) {
             if (agent["id"] == agent_id) {
-                std::cout << "[i] El agente " << agent_id << " ya existe. Actualizando." << std::endl;
+                std::cout << "[i] Agent " << agent_id << " already exists. Updating." << std::endl;
                
                 agent["description"] = description;
                 agent["meta"] = meta;
@@ -94,7 +94,7 @@ public:
         ledger_data["agents"].push_back(new_agent);
         save_json(ledger_file, ledger_data);
        
-        std::cout << "[+] Agente " << agent_id << " creado en el ledger cuántico." << std::endl;
+        std::cout << "[+] Agent " << agent_id << " created in the quantum ledger." << std::endl;
         return true;
     }
    
@@ -181,17 +181,17 @@ public:
         std::ofstream chain(chain_file, std::ios::app);
         chain << json::dump(block) << std::endl;
        
-        std::cout << "⛏️  Bloque cuántico #" << current_height << " minado" << std::endl;
+        std::cout << "⛏️  Quantum block #" << current_height << " mined" << std::endl;
         std::cout << "   Hash: " << block_hash.substr(0, 32) << "..." << std::endl;
-        std::cout << "   Nonce: " << nonce << " | Tiempo: " << duration << "s" << std::endl;
-        std::cout << "   Recompensa: " << block_reward << " BTC espejo" << std::endl;
+        std::cout << "   Nonce: " << nonce << " | Time: " << duration << "s" << std::endl;
+        std::cout << "   Reward: " << block_reward << " mirror BTC" << std::endl;
        
         EC_KEY_free(key);
         return block;
     }
    
     qfunc continuous_mining(QubistInt blocks_to_mine = 10) -> void {
-        std::cout << "🚀 Iniciando minería cuántica continua..." << std::endl;
+        std::cout << "🚀 Starting continuous quantum mining..." << std::endl;
        
         for(QubistInt i = 0; i < blocks_to_mine; i++) {
             mine_block();
@@ -213,19 +213,19 @@ private:
         QubistFloat grant = idea_entry["grant_btc_mirror"];
        
         std::stringstream analysis;
-        analysis << "🧠 ANÁLISIS CUÁNTICO-IA (Estado: |analizando⟩)" << std::endl;
+        analysis << "🧠 QUANTUM-AI ANALYSIS (State: |analyzing⟩)" << std::endl;
         analysis << "=============================================" << std::endl;
-        analysis << "Agente: " << agent << std::endl;
-        analysis << "Subvención cuántica: " << grant << " QBTC" << std::endl;
+        analysis << "Agent: " << agent << std::endl;
+        analysis << "Quantum grant: " << grant << " QBTC" << std::endl;
         analysis << std::endl;
-        analysis << "Idea original en superposición:" << std::endl;
-        analysis << "|idea⟩ = α|implementable⟩ + β|abstracto⟩" << std::endl;
+        analysis << "Original idea in superposition:" << std::endl;
+        analysis << "|idea⟩ = α|implementable⟩ + β|abstract⟩" << std::endl;
         analysis << std::endl;
-        analysis << "Medición cuántica de viabilidad:" << std::endl;
+        analysis << "Quantum viability measurement:" << std::endl;
         analysis << "⟨viabilidad|idea⟩ = " << (std::rand() % 100) / 100.0 << std::endl;
         analysis << std::endl;
-        analysis << "Entrelazamiento con blockchain espejo: ✓" << std::endl;
-        analysis << "Coherencia cuántica mantenida: " << (std::rand() % 50 + 50) << "%" << std::endl;
+        analysis << "Entanglement with mirror blockchain: ✓" << std::endl;
+        analysis << "Quantum coherence maintained: " << (std::rand() % 50 + 50) << "%" << std::endl;
        
         return analysis.str();
     }
@@ -248,7 +248,7 @@ public:
                 {"agent_name", idea["agent_name"]},
                 {"original_idea", idea["idea"]},
                 {"quantum_analysis", analysis},
-                {"quantum_state", "|analizado⟩"},
+            {"quantum_state", "|analyzed⟩"},
                 {"decoherence_factor", (std::rand() % 30) / 100.0}
             };
            
@@ -258,9 +258,9 @@ public:
             processed++;
         }
        
-        std::cout << "✅ Ciclo IA-Cuántico completado" << std::endl;
-        std::cout << "   Ideas procesadas: " << processed << std::endl;
-        std::cout << "   Salidas en: " << outputs_file << std::endl;
+        std::cout << "✅ Quantum-AI cycle completed" << std::endl;
+        std::cout << "   Ideas processed: " << processed << std::endl;
+        std::cout << "   Outputs in: " << outputs_file << std::endl;
     }
 };
 
@@ -282,8 +282,8 @@ private:
 
 public:
     qfunc monitor(QubistInt interval_seconds = 5) -> void {
-        std::cout << "🔋 Iniciando sensor de energía cuántica..." << std::endl;
-        std::cout << "   Modo: Medición de fluctuaciones del vacío" << std::endl;
+        std::cout << "🔋 Starting quantum energy sensor..." << std::endl;
+        std::cout << "   Mode: Vacuum fluctuation measurement" << std::endl;
        
         while(true) {
             auto energy = measure_quantum_fluctuations();
@@ -295,14 +295,14 @@ public:
                 {"quantum_energy", energy},
                 {"entanglement_score", entanglement},
                 {"zero_point_fluctuation", energy * 0.5},
-                {"quantum_state", "|midiendo⟩"},
+                {"quantum_state", "|measuring⟩"},
                 {"observer_effect", (std::rand() % 20) / 100.0}
             };
            
             std::cout << "⏰ " << std::ctime(&timestamp);
-            std::cout << "   Energía cuántica: " << energy << " QE" << std::endl;
-            std::cout << "   Entrelazamiento: " << (entanglement * 100) << "%" << std::endl;
-            std::cout << "   Fluctuación punto cero: " << measurement["zero_point_fluctuation"] << std::endl;
+            std::cout << "   Quantum energy: " << energy << " QE" << std::endl;
+            std::cout << "   Entanglement: " << (entanglement * 100) << "%" << std::endl;
+            std::cout << "   Zero-point fluctuation: " << measurement["zero_point_fluctuation"] << std::endl;
             std::cout << std::string(40, '-') << std::endl;
            
             std::this_thread::sleep_for(std::chrono::seconds(interval_seconds));
@@ -322,7 +322,7 @@ public:
     qfunc execute(QubistString mode, QubistList args = {}) -> void {
         if(mode == "add_agent") {
             if(args.size() < 2) {
-                std::cout << "❌ Uso: add_agent <id> <nombre> [descripción]" << std::endl;
+                std::cout << "❌ Usage: add_agent <id> <name> [description]" << std::endl;
                 return;
             }
            
@@ -348,30 +348,30 @@ public:
             energy_sensor.monitor(interval);
            
         } else if(mode == "quantum_synthesis") {
-            std::cout << "🌀 INICIANDO SÍNTESIS CUÁNTICA COMPLETA" << std::endl;
+            std::cout << "🌀 STARTING FULL QUANTUM SYNTHESIS" << std::endl;
             std::cout << "=======================================" << std::endl;
            
             // Parallel quantum execution
             std::vector<std::thread> threads;
            
             threads.emplace_back([this]() {
-                std::cout << "[Hilo 1] Minería cuántica..." << std::endl;
+                std::cout << "[Thread 1] Quantum mining..." << std::endl;
                 miner.continuous_mining(3);
             });
            
             threads.emplace_back([this]() {
-                std::cout << "[Hilo 2] Ciclo IA cuántica..." << std::endl;
+                std::cout << "[Thread 2] Quantum AI cycle..." << std::endl;
                 ai_engine.process_ideas();
             });
            
             threads.emplace_back([this]() {
-                std::cout << "[Hilo 3] Sensor energía..." << std::endl;
+                std::cout << "[Thread 3] Energy sensor..." << std::endl;
                 energy_sensor.monitor(3);
             });
            
             for(auto& t : threads) t.join();
            
-            std::cout << "✅ Síntesis cuántica completada" << std::endl;
+            std::cout << "✅ Quantum synthesis completed" << std::endl;
            
         } else {
             show_help();
@@ -381,14 +381,14 @@ public:
     qfunc show_help() -> void {
         std::cout << "🌌 SATOSHI MIRROR - QUBIST-C++ SYNTHESIS" << std::endl;
         std::cout << "=========================================" << std::endl;
-        std::cout << "Comandos cuánticos:" << std::endl;
-        std::cout << "  add_agent <id> <nombre>    - Añade agente al ledger" << std::endl;
-        std::cout << "  mine [bloques]             - Mina bloques espejo" << std::endl;
-        std::cout << "  ai_cycle                   - Ejecuta ciclo IA cuántica" << std::endl;
-        std::cout << "  energy [intervalo]         - Monitor energía cuántica" << std::endl;
-        std::cout << "  quantum_synthesis          - Ejecución paralela completa" << std::endl;
+        std::cout << "Quantum commands:" << std::endl;
+        std::cout << "  add_agent <id> <name>    - Add agent to the ledger" << std::endl;
+        std::cout << "  mine [blocks]             - Mine mirror blocks" << std::endl;
+        std::cout << "  ai_cycle                   - Run quantum AI cycle" << std::endl;
+        std::cout << "  energy [interval]         - Monitor quantum energy" << std::endl;
+        std::cout << "  quantum_synthesis          - Full parallel execution" << std::endl;
         std::cout << std::endl;
-        std::cout << "Ejemplo: ./satoshi_mirror add_agent bot_rami \"Rami Quantum\"" << std::endl;
+        std::cout << "Example: ./satoshi_mirror add_agent bot_rami \"Rami Quantum\"" << std::endl;
     }
 };
 
@@ -396,7 +396,7 @@ public:
 
 // ==================== QUBIST MAIN ENTRY POINT ====================
 qfunc main(QubistInt argc, QubistString argv[]) -> QubistInt {
-    std::cout << "🚀 Inicializando núcleo Satoshi Mirror (Qubist-C++)..." << std::endl;
+    std::cout << "🚀 Initializing Satoshi Mirror core (Qubist-C++)..." << std::endl;
    
     SatoshiMirror::SatoshiMirrorCore core;
    
@@ -415,7 +415,7 @@ qfunc main(QubistInt argc, QubistString argv[]) -> QubistInt {
     try {
         core.execute(mode, args);
     } catch(const std::exception& e) {
-        std::cout << "❌ Error cuántico: " << e.what() << std::endl;
+        std::cout << "❌ Quantum error: " << e.what() << std::endl;
         return 1;
     }
    

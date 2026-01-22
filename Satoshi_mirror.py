@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # satoshi_mirror.py - Unified Python-C++ Bridge
-# Unifica todos los scripts Python y el núcleo Qubist-C++
+# Unifies all Python scripts and the Qubist-C++ core
 
 import json
 import os
@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 import argparse
 
-# ==================== CONFIGURACIÓN UNIFICADA ====================
+# ==================== UNIFIED CONFIGURATION ====================
 class UnifiedConfig:
     def __init__(self):
         self.root_dir = Path(__file__).parent
@@ -113,7 +113,7 @@ class PythonScriptRunner:
         self.root = config.root_dir
        
     def run_script(self, script_name: str, args: List[str] = None) -> Dict:
-        """Ejecuta un script Python y devuelve resultados"""
+        """Runs a Python script and returns results"""
         if args is None:
             args = []
            
@@ -123,13 +123,13 @@ class PythonScriptRunner:
         script_path = self.root / self.config.config["python_scripts"].get(script_name)
  main
         if not script_path.exists():
-            return {"error": f"Script {script_name} no encontrado"}
+            return {"error": f"Script {script_name} not found"}
        
         try:
-            # Construir comando
+            # Build command
             cmd = [sys.executable, str(script_path)] + args
            
-            # Ejecutar
+            # Run
             result = subprocess.run(
                 cmd,
                 capture_output=True,
@@ -151,15 +151,15 @@ class PythonScriptRunner:
         return self.run_script("export_report")
    
     def run_mirror_miner(self, blocks: int = 1) -> Dict:
-        """Mina bloques en la cadena espejo"""
+        """Mines blocks on the mirror chain"""
         return self.run_script("mirror_miner", [str(blocks)])
    
     def run_mirror_supply(self) -> Dict:
-        """Calcula suministro"""
+        """Calculates supply"""
         return self.run_script("mirror_supply")
    
     def run_retro_pastnet(self, date: str, url: str, wormhole: bool = False) -> Dict:
-        """Consulta el pasado"""
+        """Queries the past"""
         args = []
         if wormhole:
             args.append("--wormhole")
@@ -167,11 +167,11 @@ class PythonScriptRunner:
         return self.run_script("retro_pastnet", args)
    
     def run_show_chain(self) -> Dict:
-        """Muestra cadena retro"""
+        """Shows retro chain"""
         return self.run_script("show_chain")
    
     def run_show_mirror_chain(self) -> Dict:
-        """Muestra cadena espejo"""
+        """Shows mirror chain"""
         return self.run_script("show_mirror_chain")
 
 # ==================== QUBIST-C++ INTERFACE ====================
@@ -186,13 +186,13 @@ class QubistCoreInterface:
  main
        
     def is_available(self) -> bool:
-        """Verifica si el núcleo Qubist-C++ está disponible"""
+        """Checks whether the Qubist-C++ core is available"""
         return self.qubist_binary.exists() and os.access(self.qubist_binary, os.X_OK)
    
     def run_qubist(self, mode: str, args: List[str] = None) -> Dict:
-        """Ejecuta el núcleo Qubist-C++"""
+        """Runs the Qubist-C++ core"""
         if not self.is_available():
-            return {"error": "Núcleo Qubist-C++ no disponible. Compila con 'make qubist'"}
+            return {"error": "Qubist-C++ core not available. Compile with 'make qubist'"}
        
         if args is None:
             args = []
@@ -218,10 +218,10 @@ class QubistCoreInterface:
             return {"error": str(e)}
    
     def compile_qubist(self) -> Dict:
-        """Compila el núcleo Qubist-C++"""
+        """Compiles the Qubist-C++ core"""
         makefile = self.root / "Makefile"
         if not makefile.exists():
-            return {"error": "Makefile no encontrado"}
+            return {"error": "Makefile not found"}
        
         try:
             make_target = self.config.bridge["qubist_layer"].get("make_target", "qubist")
@@ -250,38 +250,38 @@ class QuantumOrchestrator:
         self.mode = self.config.bridge["quantum_modes"]
        
     def quantum_synthesis(self) -> Dict:
-        """Ejecuta síntesis cuántica completa (Python + C++)"""
+        """Runs full quantum synthesis (Python + C++)"""
         results = {}
        
-        print("🌀 INICIANDO SÍNTESIS CUÁNTICA UNIFICADA")
+        print("🌀 STARTING UNIFIED QUANTUM SYNTHESIS")
         print("=" * 50)
        
-        # 1. Minar bloques con Python
-        print("[1] Minando bloques espejo (Python)...")
+        # 1. Mine blocks with Python
+        print("[1] Mining mirror blocks (Python)...")
         results["mining"] = self.python.run_mirror_miner(5)
        
-        # 2. Ejecutar ciclo IA cuántica con Qubist
-        print("[2] Ejecutando ciclo IA cuántica (Qubist-C++)...")
+        # 2. Run quantum AI cycle with Qubist
+        print("[2] Running quantum AI cycle (Qubist-C++)...")
         results["ai_cycle"] = self.qubist.run_qubist("ai_cycle")
        
-        # 3. Consultar pasado
-        print("[3] Consultando pasado (Python)...")
+        # 3. Query the past
+        print("[3] Querying the past (Python)...")
         results["retro"] = self.python.run_retro_pastnet(
             "2009-01-03",
             "https://bitcoin.org",
             wormhole=True
         )
        
-        # 4. Calcular suministro
-        print("[4] Calculando suministro (Python)...")
+        # 4. Calculate supply
+        print("[4] Calculating supply (Python)...")
         results["supply"] = self.python.run_mirror_supply()
        
-        # 5. Generar reporte
-        print("[5] Generando reporte timeline (Python)...")
+        # 5. Generate report
+        print("[5] Generating timeline report (Python)...")
         results["report"] = self.python.run_export_report()
        
-        # 6. Ejecutar sensor de energía en segundo plano
-        print("[6] Iniciando sensor de energía cuántica (Qubist-C++)...")
+        # 6. Run energy sensor in the background
+        print("[6] Starting quantum energy sensor (Qubist-C++)...")
         import threading
         energy_thread = threading.Thread(
             target=lambda: self.qubist.run_qubist("energy", ["5"])
@@ -292,35 +292,35 @@ class QuantumOrchestrator:
         results["energy_sensor"] = {"status": "running_in_background"}
        
         print("=" * 50)
-        print("✅ SÍNTESIS CUÁNTICA COMPLETADA")
+        print("✅ QUANTUM SYNTHESIS COMPLETED")
        
         return results
    
     def unified_mine(self, blocks: int, use_qubist: bool = False) -> Dict:
-        """Mina bloques usando Python o Qubist"""
+        """Mines blocks using Python or Qubist"""
         if use_qubist and self.qubist.is_available():
-            print("⚡ Usando núcleo Qubist-C++ para minería cuántica...")
+            print("⚡ Using Qubist-C++ core for quantum mining...")
             return self.qubist.run_qubist("mine", [str(blocks)])
         else:
-            print("🐍 Usando Python para minería...")
+            print("🐍 Using Python for mining...")
             return self.python.run_mirror_miner(blocks)
    
     def unified_report(self) -> Dict:
-        """Genera reporte unificado"""
+        """Generates unified report"""
         results = {}
        
-        # Reporte Python
+        # Python report
         py_report = self.python.run_export_report()
         results["python_report"] = py_report
        
-        # Leer y mostrar el reporte generado
+        # Read and display the generated report
         report_file = self.config.root_dir / "timeline_report.md"
         if report_file.exists():
             with open(report_file, 'r') as f:
                 content = f.read()
-                # Mostrar primeras 10 líneas
+                # Show first 10 lines
                 lines = content.split('\n')[:10]
-                print("\n📄 PREVIEW DEL REPORTE:")
+                print("\n📄 REPORT PREVIEW:")
                 print("\n".join(lines))
                 print("...")
        
@@ -329,51 +329,51 @@ class QuantumOrchestrator:
 # ==================== COMMAND LINE INTERFACE ====================
 def main():
     parser = argparse.ArgumentParser(
-        description="Satoshi Mirror - Bridge Python/C++ Unificado",
+        description="Satoshi Mirror - Unified Python/C++ Bridge",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-Ejemplos:
-  %(prog)s mine 10              # Mina 10 bloques (Python)
-  %(prog)s mine --qubist 5      # Mina 5 bloques con Qubist-C++
+Examples:
+  %(prog)s mine 10              # Mine 10 blocks (Python)
+  %(prog)s mine --qubist 5      # Mine 5 blocks with Qubist-C++
   %(prog)s retro 2009-01-03 https://bitcoin.org --wormhole
-  %(prog)s quantum-synthesis    # Síntesis cuántica completa
-  %(prog)s compile-qubist       # Compila núcleo Qubist-C++
-  %(prog)s status               # Estado del sistema
+  %(prog)s quantum-synthesis    # Full quantum synthesis
+  %(prog)s compile-qubist       # Compile Qubist-C++ core
+  %(prog)s status               # System status
         """
     )
    
-    subparsers = parser.add_subparsers(dest="command", help="Comandos")
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
    
-    # Comando: mine
-    mine_parser = subparsers.add_parser("mine", help="Minar bloques")
-    mine_parser.add_argument("blocks", type=int, help="Número de bloques a minar")
-    mine_parser.add_argument("--qubist", action="store_true", help="Usar núcleo Qubist-C++")
+    # Command: mine
+    mine_parser = subparsers.add_parser("mine", help="Mine blocks")
+    mine_parser.add_argument("blocks", type=int, help="Number of blocks to mine")
+    mine_parser.add_argument("--qubist", action="store_true", help="Use Qubist-C++ core")
    
-    # Comando: supply
-    subparsers.add_parser("supply", help="Mostrar suministro")
+    # Command: supply
+    subparsers.add_parser("supply", help="Show supply")
    
-    # Comando: retro
-    retro_parser = subparsers.add_parser("retro", help="Consulta al pasado")
-    retro_parser.add_argument("date", help="Fecha (YYYY-MM-DD)")
-    retro_parser.add_argument("url", help="URL a consultar")
-    retro_parser.add_argument("--wormhole", action="store_true", help="Modo wormhole")
+    # Command: retro
+    retro_parser = subparsers.add_parser("retro", help="Query the past")
+    retro_parser.add_argument("date", help="Date (YYYY-MM-DD)")
+    retro_parser.add_argument("url", help="URL to query")
+    retro_parser.add_argument("--wormhole", action="store_true", help="Wormhole mode")
    
-    # Comando: show
-    show_parser = subparsers.add_parser("show", help="Mostrar cadenas")
+    # Command: show
+    show_parser = subparsers.add_parser("show", help="Show chains")
     show_parser.add_argument("type", choices=["mirror", "retro", "both"],
-                           help="Tipo de cadena a mostrar")
+                           help="Type of chain to show")
    
-    # Comando: report
-    subparsers.add_parser("report", help="Generar reporte timeline")
+    # Command: report
+    subparsers.add_parser("report", help="Generate timeline report")
    
-    # Comando: quantum-synthesis
-    subparsers.add_parser("quantum-synthesis", help="Síntesis cuántica completa")
+    # Command: quantum-synthesis
+    subparsers.add_parser("quantum-synthesis", help="Full quantum synthesis")
    
-    # Comando: compile-qubist
-    subparsers.add_parser("compile-qubist", help="Compilar núcleo Qubist-C++")
+    # Command: compile-qubist
+    subparsers.add_parser("compile-qubist", help="Compile Qubist-C++ core")
    
-    # Comando: status
-    subparsers.add_parser("status", help="Estado del sistema")
+    # Command: status
+    subparsers.add_parser("status", help="System status")
    
     args = parser.parse_args()
    
@@ -388,7 +388,7 @@ Ejemplos:
         if "error" in result:
             print(f"❌ Error: {result['error']}")
         else:
-            print(result.get("stdout", "✅ Minería completada"))
+            print(result.get("stdout", "✅ Mining completed"))
    
     elif args.command == "supply":
         result = orchestrator.python.run_mirror_supply()
@@ -401,19 +401,19 @@ Ejemplos:
         if "error" in result:
             print(f"❌ Error: {result['error']}")
         else:
-            print(result.get("stdout", "✅ Consulta completada"))
+            print(result.get("stdout", "✅ Query completed"))
    
     elif args.command == "show":
         if args.type in ["mirror", "both"]:
             print("\n" + "="*60)
-            print("CADENA ESPEJO:")
+            print("MIRROR CHAIN:")
             print("="*60)
             result = orchestrator.python.run_show_mirror_chain()
             print(result.get("stdout", ""))
        
         if args.type in ["retro", "both"]:
             print("\n" + "="*60)
-            print("CADENA RETRO:")
+            print("RETRO CHAIN:")
             print("="*60)
             result = orchestrator.python.run_show_chain()
             print(result.get("stdout", ""))
@@ -423,26 +423,26 @@ Ejemplos:
         if "error" in result.get("python_report", {}):
             print(f"❌ Error: {result['python_report']['error']}")
         else:
-            print("✅ Reporte generado en timeline_report.md")
+            print("✅ Report generated in timeline_report.md")
    
     elif args.command == "quantum-synthesis":
         orchestrator.quantum_synthesis()
    
     elif args.command == "compile-qubist":
-        print("🔧 Compilando núcleo Qubist-C++...")
+        print("🔧 Compiling Qubist-C++ core...")
         result = orchestrator.qubist.compile_qubist()
         if "error" in result:
             print(f"❌ Error: {result['error']}")
         else:
             print(result.get("stdout", ""))
             if result.get("available_now"):
-                print("✅ Núcleo Qubist-C++ compilado y listo")
+                print("✅ Qubist-C++ core compiled and ready")
    
     elif args.command == "status":
-        print("📊 ESTADO DEL SISTEMA SATOSHI MIRROR")
+        print("📊 SATOSHI MIRROR SYSTEM STATUS")
         print("="*40)
        
-        # Verificar archivos
+        # Check files
         data_files = orchestrator.config.bridge["data_files"]
         for name, file in data_files.items():
             path = orchestrator.config.root_dir / file
@@ -450,12 +450,12 @@ Ejemplos:
             size = path.stat().st_size if path.exists() else 0
             print(f"{exists} {name:20} {file:25} {size:10,} bytes")
        
-        # Verificar Qubist-C++
+        # Check Qubist-C++
         qubist_ok = "✅" if orchestrator.qubist.is_available() else "❌"
-        print(f"\n{qubist_ok} Núcleo Qubist-C++ disponible")
+        print(f"\n{qubist_ok} Qubist-C++ core available")
        
-        # Verificar scripts Python
-        print("\n📜 Scripts Python:")
+        # Check Python scripts
+        print("\n📜 Python scripts:")
         scripts = orchestrator.config.bridge["python_scripts"]
         for name, script in scripts.items():
             path = orchestrator.config.root_dir / script
