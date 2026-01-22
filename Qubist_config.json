@@ -1,29 +1,70 @@
 {
+  "satoshi_mirror": {
+    "python_scripts": {
+      "export_report": "export_report.py",
+      "mirror_miner": "mirror_miner.py",
+      "mirror_supply": "mirror_supply.py",
+      "retro_pastnet": "retro_pastnet.py",
+      "show_chain": "show_chain.py",
+      "show_mirror_chain": "show_mirror_chain.py"
+    },
+    "qubist_layer": {
+      "binary": "satoshi_mirror",
+      "modes": ["mine", "ai_cycle", "energy", "quantum_synthesis"],
+      "source_file": "satoshi_mirror.qub.cpp",
+      "make_target": "qubist"
+    },
+    "requirements": ["requests"],
+    "data_files": {
+      "mirror_chain": "mirror_chain.jsonl",
+      "retro_chain": "retro_chain.jsonl",
+      "retro_identity": "retro_identity.json",
+      "timeline_report": "timeline_report.md"
+    },
+    "data_sync": {
+      "mirror_chain": {
+        "python": "mirror_chain.jsonl",
+        "qubist": "data/mirror_chain.quantum.jsonl",
+        "sync_strategy": "bidirectional"
+      },
+      "retro_chain": {
+        "python": "retro_chain.jsonl",
+        "qubist": "data/retro_chain.quantum.jsonl",
+        "sync_strategy": "python_to_qubist"
+      }
+    },
+    "quantum_modes": {
+      "python_only": false,
+      "cpp_only": false,
+      "hybrid": true
+    },
+    "execution_modes": {
+      "default": "python",
+      "high_performance": "qubist",
+      "quantum_synthesis": "hybrid"
+    }
+  },
   "qubist_config": {
     "version": "2.0.0",
     "quantum_mode": true,
     "entanglement_level": 0.85,
     "superposition_states": ["|minando⟩", "|analizando⟩", "|midiendo⟩"],
-   
     "blockchain": {
       "file": "mirror_chain.jsonl",
       "target_hash": "0000",
       "reward": 50.0,
       "quantum_secure": true
     },
-   
     "agents": {
       "ledger_file": "agents_ledger.json",
       "default_balance": 0.0,
       "quantum_ai": true
     },
-   
     "energy_sensor": {
       "interval": 5,
       "quantum_fluctuations": true,
       "zero_point_energy": true
     },
-   
     "execution_modes": {
       "sequential": false,
       "parallel_quantum": true,

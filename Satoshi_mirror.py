@@ -16,14 +16,31 @@ import argparse
 class UnifiedConfig:
     def __init__(self):
         self.root_dir = Path(__file__).parent
-        self.config = self.load_config()
+        self.config_path = self.root_dir / "Qubist_config.json"
+        self.data = self.load_config()
+        self.bridge = self.data["satoshi_mirror"]
+        self.qubist = self.data.get("qubist_config", {})
+        self.config = self.bridge
+
+    def _merge_defaults(self, config: Dict[str, Any], defaults: Dict[str, Any]) -> Dict[str, Any]:
+        merged = dict(config)
+        for key, value in defaults.items():
+            if key not in merged:
+                merged[key] = value
+            elif isinstance(value, dict) and isinstance(merged[key], dict):
+                merged[key] = self._merge_defaults(merged[key], value)
+        return merged
        
     def load_config(self) -> Dict:
+ codex/define-single-source-of-truth-config-file
+        defaults = {
+ 
         config_path = self.root_dir / "Qubist_config.json"
         if config_path.exists():
             with open(config_path) as f:
                 return json.load(f)
         return {
+ main
             "python_scripts": {
                 "export_report": "export_report.py",
                 "mirror_miner": "mirror_miner.py",
@@ -32,24 +49,62 @@ class UnifiedConfig:
                 "show_chain": "show_chain.py",
                 "show_mirror_chain": "show_mirror_chain.py"
             },
-            "qubist_core": "satoshi_mirror",  # Ejecutable compilado
+            "qubist_layer": {
+                "binary": "satoshi_mirror",
+                "modes": ["mine", "ai_cycle", "energy", "quantum_synthesis"],
+                "source_file": "satoshi_mirror.qub.cpp",
+                "make_target": "qubist"
+            },
             "data_files": {
                 "mirror_chain": "mirror_chain.jsonl",
                 "retro_chain": "retro_chain.jsonl",
                 "retro_identity": "retro_identity.json",
                 "timeline_report": "timeline_report.md"
             },
+            "data_sync": {
+                "mirror_chain": {
+                    "python": "mirror_chain.jsonl",
+                    "qubist": "data/mirror_chain.quantum.jsonl",
+                    "sync_strategy": "bidirectional"
+                },
+                "retro_chain": {
+                    "python": "retro_chain.jsonl",
+                    "qubist": "data/retro_chain.quantum.jsonl",
+                    "sync_strategy": "python_to_qubist"
+                }
+            },
             "quantum_modes": {
                 "python_only": False,
                 "cpp_only": False,
                 "hybrid": True
-            }
+            },
+            "execution_modes": {
+                "default": "python",
+                "high_performance": "qubist",
+                "quantum_synthesis": "hybrid"
+            },
+            "requirements": ["requests"]
+        }
+        raw_config = {}
+        if self.config_path.exists():
+            with open(self.config_path) as f:
+                raw_config = json.load(f)
+        bridge_config = raw_config.get("satoshi_mirror", {})
+        if "python_scripts" not in bridge_config and "python_layer" in bridge_config:
+            bridge_config = dict(bridge_config)
+            bridge_config["python_scripts"] = bridge_config.get("python_layer", {}).get("scripts", {})
+        merged_bridge = self._merge_defaults(bridge_config, defaults)
+        return {
+            "satoshi_mirror": merged_bridge,
+            "qubist_config": raw_config.get("qubist_config", {})
         }
    
     def save_config(self):
+        self.data["satoshi_mirror"] = self.bridge
+        config_path = self.config_path
         config_path = self.root_dir / "Qubist_config.json"
         with open(config_path, 'w') as f:
-            json.dump(self.config, f, indent=2)
+            json.dump(self.data, f, indent=2)
 
 # ==================== PYTHON SCRIPT RUNNER ====================
 class PythonScriptRunner:
@@ -62,7 +117,11 @@ class PythonScriptRunner:
         if args is None:
             args = []
            
+ codex/define-single-source-of-truth-config-file
+        script_path = self.root / self.config.bridge["python_scripts"].get(script_name)
+
         script_path = self.root / self.config.config["python_scripts"].get(script_name)
+ main
         if not script_path.exists():
             return {"error": f"Script {script_name} no encontrado"}
        
@@ -120,7 +179,11 @@ class QubistCoreInterface:
     def __init__(self, config: UnifiedConfig):
         self.config = config
         self.root = config.root_dir
+ codex/define-single-source-of-truth-config-file
+        self.qubist_binary = self.root / self.config.bridge["qubist_layer"]["binary"]
+
         self.qubist_binary = self.root / self.config.config["qubist_core"]
+ main
        
     def is_available(self) -> bool:
         """Verifica si el núcleo Qubist-C++ está disponible"""
@@ -161,8 +224,9 @@ class QubistCoreInterface:
             return {"error": "Makefile no encontrado"}
        
         try:
+            make_target = self.config.bridge["qubist_layer"].get("make_target", "qubist")
             result = subprocess.run(
-                ["make", "qubist"],
+                ["make", make_target],
                 capture_output=True,
                 text=True,
                 cwd=self.root
@@ -183,7 +247,7 @@ class QuantumOrchestrator:
         self.config = UnifiedConfig()
         self.python = PythonScriptRunner(self.config)
         self.qubist = QubistCoreInterface(self.config)
-        self.mode = self.config.config["quantum_modes"]
+        self.mode = self.config.bridge["quantum_modes"]
        
     def quantum_synthesis(self) -> Dict:
         """Ejecuta síntesis cuántica completa (Python + C++)"""
@@ -379,7 +443,7 @@ Ejemplos:
         print("="*40)
        
         # Verificar archivos
-        data_files = orchestrator.config.config["data_files"]
+        data_files = orchestrator.config.bridge["data_files"]
         for name, file in data_files.items():
             path = orchestrator.config.root_dir / file
             exists = "✅" if path.exists() else "❌"
@@ -392,7 +456,7 @@ Ejemplos:
        
         # Verificar scripts Python
         print("\n📜 Scripts Python:")
-        scripts = orchestrator.config.config["python_scripts"]
+        scripts = orchestrator.config.bridge["python_scripts"]
         for name, script in scripts.items():
             path = orchestrator.config.root_dir / script
             exists = "✅" if path.exists() else "❌"
