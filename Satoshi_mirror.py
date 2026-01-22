@@ -62,7 +62,7 @@ class PythonScriptRunner:
         if args is None:
             args = []
            
-        script_path = self.root / self.config["python_scripts"].get(script_name)
+        script_path = self.root / self.config.config["python_scripts"].get(script_name)
         if not script_path.exists():
             return {"error": f"Script {script_name} no encontrado"}
        
@@ -120,7 +120,7 @@ class QubistCoreInterface:
     def __init__(self, config: UnifiedConfig):
         self.config = config
         self.root = config.root_dir
-        self.qubist_binary = self.root / self.config["qubist_core"]
+        self.qubist_binary = self.root / self.config.config["qubist_core"]
        
     def is_available(self) -> bool:
         """Verifica si el núcleo Qubist-C++ está disponible"""
