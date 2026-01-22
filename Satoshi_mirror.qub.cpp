@@ -172,7 +172,8 @@ public:
             {"difficulty", difficulty},
             {"mining_time", duration},
             {"reward", block_reward},
-            {"miner_address", "quantum_miner_" + std::to_hash(block_hash.substr(0, 16))},
+            {"miner_address", "quantum_miner_" +
+                std::to_string(std::hash<std::string>{}(block_hash.substr(0, 16)))},
             {"quantum_state", "superposition|mined⟩"}
         };
        
