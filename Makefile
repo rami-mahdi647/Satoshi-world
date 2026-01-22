@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -std=c++20 -O3 -march=native -pthread
 LDFLAGS = -lssl -lcrypto -lpthread
 
-QUBIST_SOURCES = satoshi_mirror.qub.cpp
+QUBIST_SOURCES = Satoshi_mirror.qub.cpp
 QUBIST_HEADERS = quantum/qubist.hpp cyberpunk/core.hpp temporal/blockchain.hpp
 QUBIST_TARGET = satoshi_mirror
 
