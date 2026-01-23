@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Satoshi World | Panel Cyberpunk</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #05070c;
+        --panel: rgba(12, 18, 32, 0.92);
+        --panel-border: rgba(88, 247, 255, 0.4);
+        --neon: #4ef2ff;
+        --neon-2: #b44bff;
+        --accent: #f7ff6d;
+        --text: #e3f3ff;
+        --muted: #9aa9bf;
+        --danger: #ff6b88;
+        --success: #37f6b2;
+        --shadow: 0 0 20px rgba(78, 242, 255, 0.25);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Rajdhani", "Orbitron", "Segoe UI", system-ui, sans-serif;
+        background: radial-gradient(circle at top, rgba(88, 247, 255, 0.15), transparent 55%),
+          linear-gradient(140deg, #04060c, #0b0f1d 60%, #090a14);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      .app {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      header {
+        padding: 28px 5vw 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .brand span {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .mode-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.95rem;
+      }
+
+      .switch {
+        position: relative;
+        width: 52px;
+        height: 26px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 999px;
+        border: 1px solid var(--panel-border);
+        box-shadow: var(--shadow);
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: var(--neon);
+        border-radius: 50%;
+        transition: transform 0.2s ease;
+      }
+
+      .switch input:checked + .slider {
+        transform: translateX(26px);
+        background: var(--accent);
+      }
+
+      main {
+        flex: 1;
+        padding: 20px 5vw 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(6px);
+      }
+
+      .panel h2 {
+        margin-top: 0;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(78, 242, 255, 0.1);
+      }
+
+      .stat-row:last-child {
+        border-bottom: none;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .stat-value {
+        font-weight: 600;
+      }
+
+      .actions {
+        display: grid;
+        gap: 12px;
+      }
+
+      label {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+        display: block;
+      }
+
+      input,
+      select,
+      textarea {
+        width: 100%;
+        background: rgba(8, 12, 22, 0.9);
+        border: 1px solid rgba(78, 242, 255, 0.3);
+        border-radius: 10px;
+        padding: 10px 12px;
+        color: var(--text);
+        font-size: 1rem;
+      }
+
+      button {
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 16px;
+        background: linear-gradient(120deg, var(--neon), var(--neon-2));
+        color: #0a0e1a;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        text-transform: uppercase;
+      }
+
+      button.secondary {
+        background: linear-gradient(120deg, rgba(78, 242, 255, 0.2), rgba(180, 75, 255, 0.35));
+        color: var(--text);
+      }
+
+      .status-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(78, 242, 255, 0.12);
+        border: 1px solid rgba(78, 242, 255, 0.35);
+        font-size: 0.8rem;
+      }
+
+      .tag.success {
+        border-color: rgba(55, 246, 178, 0.5);
+        color: var(--success);
+      }
+
+      .tag.warn {
+        border-color: rgba(255, 107, 136, 0.5);
+        color: var(--danger);
+      }
+
+      .advanced {
+        display: none;
+      }
+
+      #mode-toggle:checked ~ main .advanced {
+        display: block;
+      }
+
+      #mode-toggle:checked ~ main .advanced-panel {
+        border-color: rgba(247, 255, 109, 0.6);
+      }
+
+      .footer-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .footer-actions button {
+        flex: 1 1 160px;
+      }
+
+      .helper-text {
+        color: var(--muted);
+        font-size: 0.85rem;
+        margin-top: 8px;
+      }
+
+      @media (max-width: 720px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .mode-toggle {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div class="brand">
+          <h1>Satoshi World</h1>
+          <span>Panel de control • Ciudad cibernética</span>
+        </div>
+        <div class="mode-toggle">
+          <span>Modo básico</span>
+          <label class="switch" for="mode-toggle" aria-label="Alternar modo avanzado">
+            <input id="mode-toggle" type="checkbox" />
+            <span class="slider"></span>
+          </label>
+          <span>Modo avanzado</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="grid">
+          <article class="panel" aria-labelledby="balance-title">
+            <h2 id="balance-title">Balance</h2>
+            <div class="stat-row">
+              <span class="stat-label">Saldo total</span>
+              <span class="stat-value">₿ 12.480,55</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Disponible</span>
+              <span class="stat-value">₿ 9.204,21</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Bloqueado</span>
+              <span class="stat-value">₿ 3.276,34</span>
+            </div>
+            <div class="status-tags">
+              <span class="tag success">Bóveda cifrada</span>
+              <span class="tag">Optimización activa</span>
+              <span class="tag warn">2 alertas</span>
+            </div>
+          </article>
+
+          <article class="panel" aria-labelledby="send-title">
+            <h2 id="send-title">Enviar / Recibir</h2>
+            <div class="actions">
+              <div>
+                <label for="send-to">Dirección destino</label>
+                <input id="send-to" type="text" placeholder="sat://wallet/0x..." aria-label="Dirección destino" />
+              </div>
+              <div>
+                <label for="send-amount">Cantidad</label>
+                <input id="send-amount" type="number" placeholder="0.00" aria-label="Cantidad a enviar" />
+              </div>
+              <button type="button" data-action="send" aria-label="Enviar fondos">Enviar fondos</button>
+              <button type="button" class="secondary" data-action="receive" aria-label="Generar QR de recepción">
+                Generar QR de recepción
+              </button>
+            </div>
+          </article>
+
+          <article class="panel" aria-labelledby="activity-title">
+            <h2 id="activity-title">Actividad</h2>
+            <div class="stat-row">
+              <span class="stat-label">Última transacción</span>
+              <span class="stat-value">hace 2 min</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Operaciones pendientes</span>
+              <span class="stat-value">3</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Nodo preferido</span>
+              <span class="stat-value">Omega-7</span>
+            </div>
+            <button type="button" class="secondary" data-action="activity" aria-label="Ver actividad completa">
+              Ver actividad completa
+            </button>
+          </article>
+        </section>
+
+        <section class="grid">
+          <article class="panel" aria-labelledby="network-title">
+            <h2 id="network-title">Estado de red</h2>
+            <div class="stat-row">
+              <span class="stat-label">Latencia</span>
+              <span class="stat-value">42 ms</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Peers activos</span>
+              <span class="stat-value">128</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Ancho de banda</span>
+              <span class="stat-value">1.2 Gbps</span>
+            </div>
+            <button type="button" class="secondary" data-action="sync" aria-label="Sincronizar red">
+              Sincronizar red
+            </button>
+          </article>
+
+          <article class="panel" aria-labelledby="sync-title">
+            <h2 id="sync-title">Sincronización</h2>
+            <div class="stat-row">
+              <span class="stat-label">Altura de bloque</span>
+              <span class="stat-value">8,492,010</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Progreso</span>
+              <span class="stat-value">97%</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Tiempo estimado</span>
+              <span class="stat-value">7 min</span>
+            </div>
+            <div class="status-tags">
+              <span class="tag success">Canal cuántico estable</span>
+              <span class="tag">Turbo sync</span>
+            </div>
+          </article>
+
+          <article class="panel" aria-labelledby="security-title">
+            <h2 id="security-title">Seguridad</h2>
+            <div class="stat-row">
+              <span class="stat-label">Copia de seguridad</span>
+              <span class="stat-value">Actualizada hoy</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Seed</span>
+              <span class="stat-value">Vault 2/3</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Firewall</span>
+              <span class="stat-value">Activo</span>
+            </div>
+            <button type="button" class="secondary" data-action="backup" aria-label="Gestionar copias de seguridad">
+              Gestionar copias de seguridad
+            </button>
+          </article>
+        </section>
+
+        <section class="grid">
+          <article class="panel" aria-labelledby="mining-title">
+            <h2 id="mining-title">Minería / Quantum</h2>
+            <div class="stat-row">
+              <span class="stat-label">Rendimiento</span>
+              <span class="stat-value">92 TH/s</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Núcleos activos</span>
+              <span class="stat-value">48</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Eficiencia</span>
+              <span class="stat-value">83%</span>
+            </div>
+            <div class="actions">
+              <button type="button" data-action="mine" aria-label="Iniciar minería cuántica">Iniciar minería cuántica</button>
+              <button type="button" class="secondary" data-action="optimize" aria-label="Optimizar minería">
+                Optimizar nodos
+              </button>
+            </div>
+          </article>
+
+          <article class="panel advanced advanced-panel" aria-labelledby="advanced-title">
+            <h2 id="advanced-title">Configuración avanzada</h2>
+            <div class="actions">
+              <div>
+                <label for="routing">Ruteo multicanal</label>
+                <select id="routing" aria-label="Ruteo multicanal">
+                  <option>Auto</option>
+                  <option>Canal 7</option>
+                  <option>Canal 12</option>
+                  <option>Canal 21</option>
+                </select>
+              </div>
+              <div>
+                <label for="quantum">Algoritmo cuántico</label>
+                <select id="quantum" aria-label="Algoritmo cuántico">
+                  <option>Q-Flux</option>
+                  <option>Neutrino Pulse</option>
+                  <option>Photon Forge</option>
+                </select>
+              </div>
+              <div>
+                <label for="threshold">Umbral de confirmación</label>
+                <input id="threshold" type="number" placeholder="6" aria-label="Umbral de confirmación" />
+              </div>
+              <button type="button" class="secondary" data-action="save-settings" aria-label="Guardar configuración avanzada">
+                Guardar configuración
+              </button>
+              <p class="helper-text">Panel avanzado oculto por defecto. Activa el modo avanzado para editar.</p>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel" aria-labelledby="advanced-security-title">
+          <h2 id="advanced-security-title">Configuración avanzada de seguridad</h2>
+          <div class="grid">
+            <div>
+              <label for="seed-notes">Notas de seed</label>
+              <textarea id="seed-notes" rows="3" placeholder="Registro cifrado..." aria-label="Notas de seed"></textarea>
+            </div>
+            <div>
+              <label for="cold-storage">Cold storage</label>
+              <select id="cold-storage" aria-label="Estado de cold storage">
+                <option>Desconectado</option>
+                <option>Verificado</option>
+                <option>En bóveda física</option>
+              </select>
+              <p class="helper-text">Mantén al menos un backup fuera de línea.</p>
+            </div>
+          </div>
+          <div class="footer-actions">
+            <button type="button" class="secondary" data-action="export" aria-label="Exportar configuración">
+              Exportar configuración
+            </button>
+            <button type="button" data-action="lockdown" aria-label="Activar lockdown">
+              Activar lockdown
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
