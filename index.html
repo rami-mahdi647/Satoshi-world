@@ -648,12 +648,15 @@
                 <h2 id="terminal-title">Terminal de 10K bots</h2>
                 <div class="terminal" aria-live="polite">
                   <div class="terminal-header">
-                    <span>Simulación de red: 10.000 bots activos</span>
+                    <span>Simulación de aprendizaje: 10.000 bots entrenando</span>
                     <span id="terminal-clock">00:00:00</span>
                   </div>
                   <div class="terminal-log" id="terminal-log"></div>
                 </div>
-                <p class="helper-text">Vista simplificada del flujo de tareas. Cambia al modo avanzado para más detalles.</p>
+                <p class="helper-text">
+                  Vista simplificada del aprendizaje colectivo, mejoras de modelos y progreso del ecosistema. Cambia al modo
+                  avanzado para más detalles.
+                </p>
               </article>
             </section>
 
@@ -923,40 +926,53 @@
         autopayStatus.textContent = state.autopay ? "Auto-pago: activo" : "Auto-pago: apagado";
       };
 
-      const terminalSources = [
-        "Sector-01",
-        "Sector-02",
-        "Sector-03",
-        "Sector-04",
-        "Distrito Norte",
-        "Distrito Sur",
-        "Puente Omega",
-        "Anillo Central",
+      const terminalLedgerFallback = [
+        { id: 12, expertise: "algoritmos de consenso", neural_networks: 18, progress: 63 },
+        { id: 42, expertise: "computación cuántica", neural_networks: 32, progress: 78 },
+        { id: 87, expertise: "ciberseguridad", neural_networks: 21, progress: 71 },
+        { id: 128, expertise: "optimización energética", neural_networks: 26, progress: 69 },
+        { id: 203, expertise: "modelos climáticos", neural_networks: 14, progress: 58 },
+        { id: 317, expertise: "bioingeniería urbana", neural_networks: 19, progress: 74 },
+        { id: 402, expertise: "logística autónoma", neural_networks: 24, progress: 80 },
+        { id: 519, expertise: "minería responsable", neural_networks: 11, progress: 55 },
       ];
+      let terminalLedger = [];
 
-      const terminalActions = [
-        "Reparando luminaria",
-        "Recolectando residuos",
-        "Verificando sensores",
-        "Redistribuyendo energía",
-        "Actualizando rutas",
-        "Asistiendo peatón",
-        "Refuerzo de seguridad",
-        "Monitor de agua",
-      ];
+      const loadTerminalLedger = async () => {
+        try {
+          const response = await fetch("agents_ledger.json", { cache: "no-store" });
+          if (response.ok) {
+            const data = await response.json();
+            if (Array.isArray(data)) {
+              terminalLedger = data;
+            }
+          }
+        } catch (error) {
+          terminalLedger = [];
+        }
+        if (!terminalLedger.length) {
+          terminalLedger = terminalLedgerFallback;
+        }
+      };
 
       const renderTerminalLine = () => {
         const time = new Date().toLocaleTimeString("es-ES", { hour12: false });
-        const source = terminalSources[Math.floor(Math.random() * terminalSources.length)];
-        const action = terminalActions[Math.floor(Math.random() * terminalActions.length)];
-        const efficiency = Math.floor(82 + Math.random() * 17);
+        const entry = terminalLedger[Math.floor(Math.random() * terminalLedger.length)];
+        const botId = String(entry?.id ?? 0).padStart(3, "0");
+        const expertise = entry?.expertise ?? "investigación distribuida";
+        const networks = entry?.neural_networks ?? 0;
+        const progress = entry?.progress ?? 0;
         return `
           <div class="terminal-line">
             <span>[${time}]</span>
-            <span>${source}</span>
             <span>•</span>
-            <span>${action}</span>
-            <span>• eficiencia ${efficiency}%</span>
+            <span>Bot #${botId}</span>
+            <span>•</span>
+            <span>Especialista en ${expertise}</span>
+            <span>•</span>
+            <span>NN:${networks}</span>
+            <span>•</span>
+            <span>Progreso: ${progress}%</span>
           </div>
         `;
       };
@@ -1251,9 +1267,16 @@
       updateInfra();
       renderBots();
       renderProjects();
+ codex/add-json-exporter-for-agents-and-metrics
       updateTerminal();
       loadLedgerSnapshot();
       setInterval(updateTerminal, 3500);
+
+      loadTerminalLedger().then(() => {
+        updateTerminal();
+        setInterval(updateTerminal, 3500);
+      });
+ main
     </script>
   </body>
 </html>
