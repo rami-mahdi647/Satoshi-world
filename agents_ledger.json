@@ -1,0 +1,136 @@
+{
+  "domain_catalog": [
+    "matemáticas avanzadas",
+    "computación cuántica",
+    "fusión nuclear",
+    "criptografía",
+    "sistemas distribuidos",
+    "economía digital",
+    "inteligencia artificial",
+    "seguridad de redes",
+    "robótica autónoma",
+    "energía de plasma",
+    "neurociencia aplicada",
+    "ingeniería de materiales"
+  ],
+  "agent_generator": {
+    "target_count": 10000,
+    "sample_agents": [
+      {
+        "id": "bot_satoshi_mirror",
+        "name": "Satoshi Mirror Bot",
+        "balance_btc_mirror": 0.0,
+        "ai_unlocked": false,
+        "description": "Bot focused on mirror mining and early economy.",
+        "expertise": "protocolos de consenso y minería espejo",
+        "neural_networks": ["MirrorNet-v3", "ConsensusForge"],
+        "domain_level": 7,
+        "domains": ["economía digital", "criptografía", "sistemas distribuidos"],
+        "meta": {
+          "epoch_origin": "2009"
+        }
+      },
+      {
+        "id": "bot_archivist_2009",
+        "name": "Archivist 2009",
+        "balance_btc_mirror": 275.0,
+        "ai_unlocked": true,
+        "description": "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009.",
+        "expertise": "curación histórica y análisis de documentos",
+        "neural_networks": ["ArchiveMind", "TemporalIndex"],
+        "domain_level": 6,
+        "domains": ["matemáticas avanzadas", "criptografía", "economía digital"],
+        "meta": {
+          "epoch_origin": "2009"
+        }
+      },
+      {
+        "id": "bot_quanta_fusion",
+        "name": "Quanta Fusion",
+        "balance_btc_mirror": 88.0,
+        "ai_unlocked": true,
+        "description": "Bot dedicado a simular reactores de fusión y cadenas de suministro energéticas.",
+        "expertise": "simulación termo-nuclear y control de plasma",
+        "neural_networks": ["PlasmaWeave", "FusionCore-v2"],
+        "domain_level": 9,
+        "domains": ["fusión nuclear", "energía de plasma", "ingeniería de materiales"],
+        "meta": {
+          "epoch_origin": "2041"
+        }
+      },
+      {
+        "id": "bot_quantum_oracle",
+        "name": "Quantum Oracle",
+        "balance_btc_mirror": 144.0,
+        "ai_unlocked": true,
+        "description": "Bot oráculo para predicción de estados cuánticos y riesgos computacionales.",
+        "expertise": "modelado probabilístico cuántico",
+        "neural_networks": ["Q-Oracle", "SchroedingerTrace"],
+        "domain_level": 8,
+        "domains": ["computación cuántica", "matemáticas avanzadas", "inteligencia artificial"],
+        "meta": {
+          "epoch_origin": "2035"
+        }
+      }
+    ],
+    "generator_note": "Estructura de referencia para crear agentes en lote sin instanciar 10K en runtime."
+  },
+  "agents": [
+    {
+      "id": "bot_satoshi_mirror",
+      "name": "Satoshi Mirror Bot",
+      "balance_btc_mirror": 0.0,
+      "ai_unlocked": false,
+      "description": "Bot focused on mirror mining and early economy.",
+      "expertise": "protocolos de consenso y minería espejo",
+      "neural_networks": ["MirrorNet-v3", "ConsensusForge"],
+      "domain_level": 7,
+      "domains": ["economía digital", "criptografía", "sistemas distribuidos"],
+      "meta": {
+        "epoch_origin": "2009"
+      }
+    },
+    {
+      "id": "bot_archivist_2009",
+      "name": "Archivist 2009",
+      "balance_btc_mirror": 275.0,
+      "ai_unlocked": true,
+      "description": "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009.",
+      "expertise": "curación histórica y análisis de documentos",
+      "neural_networks": ["ArchiveMind", "TemporalIndex"],
+      "domain_level": 6,
+      "domains": ["matemáticas avanzadas", "criptografía", "economía digital"],
+      "meta": {
+        "epoch_origin": "2009"
+      }
+    },
+    {
+      "id": "bot_quanta_fusion",
+      "name": "Quanta Fusion",
+      "balance_btc_mirror": 88.0,
+      "ai_unlocked": true,
+      "description": "Bot dedicado a simular reactores de fusión y cadenas de suministro energéticas.",
+      "expertise": "simulación termo-nuclear y control de plasma",
+      "neural_networks": ["PlasmaWeave", "FusionCore-v2"],
+      "domain_level": 9,
+      "domains": ["fusión nuclear", "energía de plasma", "ingeniería de materiales"],
+      "meta": {
+        "epoch_origin": "2041"
+      }
+    },
+    {
+      "id": "bot_quantum_oracle",
+      "name": "Quantum Oracle",
+      "balance_btc_mirror": 144.0,
+      "ai_unlocked": true,
+      "description": "Bot oráculo para predicción de estados cuánticos y riesgos computacionales.",
+      "expertise": "modelado probabilístico cuántico",
+      "neural_networks": ["Q-Oracle", "SchroedingerTrace"],
+      "domain_level": 8,
+      "domains": ["computación cuántica", "matemáticas avanzadas", "inteligencia artificial"],
+      "meta": {
+        "epoch_origin": "2035"
+      }
+    }
+  ]
+}
