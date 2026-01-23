@@ -562,15 +562,15 @@
                 <h2 id="balance-title">Balance</h2>
                 <div class="stat-row">
                   <span class="stat-label">Saldo total</span>
-                  <span class="stat-value">₿ 12.480,55</span>
+                  <span class="stat-value" id="metric-total-balance">₿ 12.480,55</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Disponible</span>
-                  <span class="stat-value">₿ 9.204,21</span>
+                  <span class="stat-value" id="metric-available-balance">₿ 9.204,21</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Bloqueado</span>
-                  <span class="stat-value">₿ 3.276,34</span>
+                  <span class="stat-value" id="metric-locked-balance">₿ 3.276,34</span>
                 </div>
                 <div class="status-tags">
                   <span class="tag success">Bóveda cifrada</span>
@@ -609,6 +609,10 @@
                 <div class="stat-row">
                   <span class="stat-label">Operaciones pendientes</span>
                   <span class="stat-value">3</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">Agentes activos</span>
+                  <span class="stat-value" id="metric-active-agents">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Nodo preferido</span>
@@ -897,10 +901,20 @@
       const autopayStatus = document.getElementById("autopay-status");
       const terminalLog = document.getElementById("terminal-log");
       const terminalClock = document.getElementById("terminal-clock");
+      const metricTotalBalance = document.getElementById("metric-total-balance");
+      const metricAvailableBalance = document.getElementById("metric-available-balance");
+      const metricLockedBalance = document.getElementById("metric-locked-balance");
+      const metricActiveAgents = document.getElementById("metric-active-agents");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabContents = document.querySelectorAll(".tab-content");
 
       const formatAddress = (address) => (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "—");
+      const formatBtc = (value) =>
+        `₿ ${new Intl.NumberFormat("es-ES", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(value ?? 0)}`;
+      const formatCount = (value) => new Intl.NumberFormat("es-ES").format(value ?? 0);
 
       const updateInfra = () => {
         apiStatus.textContent = state.apiBase ? state.apiBase : "Sin configurar";
@@ -968,6 +982,7 @@
           item.innerHTML = `
             <h3>${bot.task}</h3>
             <div class="stat-row"><span class="stat-label">Presupuesto</span><span class="stat-value">₿ ${bot.budget}</span></div>
+            <div class="stat-row"><span class="stat-label">Especialidad</span><span class="stat-value">${bot.specialty ?? "Operaciones urbanas"}</span></div>
             <div class="stat-row"><span class="stat-label">Estado</span><span class="status-pill ${bot.statusClass}">${bot.status}</span></div>
             <div class="stat-row"><span class="stat-label">Responsable</span><span class="stat-value">${bot.owner}</span></div>
           `;
@@ -1131,6 +1146,52 @@
         updateInfra();
       };
 
+      const applyLedgerSnapshot = (snapshot) => {
+        if (!snapshot || !Array.isArray(snapshot.agents)) {
+          return;
+        }
+        state.bots = snapshot.agents.map((agent) => {
+          const balance = Number(agent.balance_btc_mirror ?? 0);
+          const active = Boolean(agent.ai_unlocked);
+          return {
+            task: agent.name ?? agent.id ?? "Bot operativo",
+            budget: formatBtc(balance).replace("₿ ", ""),
+            owner: agent.owner ?? "Ledger",
+            status: agent.status ?? (active ? "Activo" : "En espera"),
+            statusClass: active ? "" : "warn",
+            specialty: agent.specialty ?? agent.description ?? "Operaciones urbanas",
+          };
+        });
+        const metrics = snapshot.metrics ?? {};
+        if (metricTotalBalance) {
+          metricTotalBalance.textContent = formatBtc(metrics.total_balance_btc);
+        }
+        if (metricAvailableBalance) {
+          metricAvailableBalance.textContent = formatBtc(metrics.available_balance_btc);
+        }
+        if (metricLockedBalance) {
+          metricLockedBalance.textContent = formatBtc(metrics.locked_balance_btc);
+        }
+        if (metricActiveAgents) {
+          metricActiveAgents.textContent = formatCount(metrics.ai_unlocked_agents);
+        }
+        persist();
+        renderBots();
+      };
+
+      const loadLedgerSnapshot = async () => {
+        try {
+          const response = await fetch("agents_ledger.json", { cache: "no-store" });
+          if (!response.ok) {
+            return;
+          }
+          const snapshot = await response.json();
+          applyLedgerSnapshot(snapshot);
+        } catch (error) {
+          // Snapshot is optional.
+        }
+      };
+
       tabButtons.forEach((button) => {
         button.addEventListener("click", () => {
           tabButtons.forEach((item) => {
@@ -1191,6 +1252,7 @@
       renderBots();
       renderProjects();
       updateTerminal();
+      loadLedgerSnapshot();
       setInterval(updateTerminal, 3500);
     </script>
   </body>

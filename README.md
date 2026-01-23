@@ -17,6 +17,16 @@ python3 Satoshi_mirror.py mine 5
 python3 Satoshi_mirror.py quantum-synthesis
 ```
 
+## Snapshot del ledger para frontend
+
+El frontend (`index.html`) consume un snapshot JSON con agentes y métricas desde el mismo hosting estático. Para regenerarlo en producción, ejecuta:
+
+```bash
+python3 Satoshi_mirror.py export-ledger
+```
+
+El comando sobrescribe/crea `agents_ledger.json` en el directorio raíz, listo para ser servido junto a `index.html`.
+
 ## Python usage (Python)
 
 Example taken from `Satoshi_mirror.py` that executes a Python script with arguments:

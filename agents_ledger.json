@@ -1,0 +1,38 @@
+{
+  "generated_at": "2024-01-01T00:00:00Z",
+  "agents": [
+    {
+      "id": "bot_satoshi_mirror",
+      "name": "Satoshi Mirror Bot",
+      "balance_btc_mirror": 0.0,
+      "ai_unlocked": false,
+      "description": "Bot enfocado en minería espejo y economía temprana.",
+      "specialty": "Minería cuántica",
+      "status": "En espera",
+      "owner": "Ledger",
+      "meta": {}
+    },
+    {
+      "id": "bot_archivist_2009",
+      "name": "Archivist 2009",
+      "balance_btc_mirror": 275.0,
+      "ai_unlocked": true,
+      "description": "Bot responsable de sintetizar conocimiento de bitcoin.org 2009.",
+      "specialty": "Archivística temporal",
+      "status": "Activo",
+      "owner": "Ledger",
+      "meta": {}
+    }
+  ],
+  "metrics": {
+    "total_agents": 2,
+    "ai_unlocked_agents": 1,
+    "total_balance_btc": 275.0,
+    "available_balance_btc": 203.5,
+    "locked_balance_btc": 71.5,
+    "specialties": {
+      "Minería cuántica": 1,
+      "Archivística temporal": 1
+    }
+  }
+}

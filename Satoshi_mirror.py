@@ -248,6 +248,98 @@ class QuantumOrchestrator:
         self.python = PythonScriptRunner(self.config)
         self.qubist = QubistCoreInterface(self.config)
         self.mode = self.config.bridge["quantum_modes"]
+
+    def export_ledger_snapshot(self, output_path: Optional[str] = None) -> Dict:
+        """Exports an agents + metrics snapshot for the frontend."""
+        ledger_file = self.config.qubist.get("agents", {}).get("ledger_file", "agents_ledger.json")
+        ledger_path = Path(output_path) if output_path else self.config.root_dir / ledger_file
+        ledger_data = self._load_ledger_data(ledger_path)
+        snapshot = self._build_ledger_snapshot(ledger_data)
+        with open(ledger_path, "w") as f:
+            json.dump(snapshot, f, indent=2)
+        return {"success": True, "path": str(ledger_path), "agents": len(snapshot["agents"])}
+
+    def _load_ledger_data(self, ledger_path: Path) -> Dict[str, Any]:
+        if ledger_path.exists():
+            with open(ledger_path, "r") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                return data
+        return {"agents": self._default_agents()}
+
+    def _default_agents(self) -> List[Dict[str, Any]]:
+        return [
+            {
+                "id": "bot_satoshi_mirror",
+                "name": "Satoshi Mirror Bot",
+                "balance_btc_mirror": 0.0,
+                "ai_unlocked": False,
+                "description": "Bot enfocado en minería espejo y economía temprana.",
+                "specialty": "Minería cuántica",
+            },
+            {
+                "id": "bot_archivist_2009",
+                "name": "Archivist 2009",
+                "balance_btc_mirror": 275.0,
+                "ai_unlocked": True,
+                "description": "Bot responsable de sintetizar conocimiento de bitcoin.org 2009.",
+                "specialty": "Archivística temporal",
+            },
+        ]
+
+    def _build_ledger_snapshot(self, ledger_data: Dict[str, Any]) -> Dict[str, Any]:
+        agents = ledger_data.get("agents")
+        if not isinstance(agents, list) or not agents:
+            agents = self._default_agents()
+
+        enriched_agents: List[Dict[str, Any]] = []
+        total_balance = 0.0
+        ai_unlocked_count = 0
+        specialty_counts: Dict[str, int] = {}
+
+        for agent in agents:
+            if not isinstance(agent, dict):
+                continue
+            balance = float(agent.get("balance_btc_mirror", 0.0) or 0.0)
+            total_balance += balance
+            ai_unlocked = bool(agent.get("ai_unlocked", False))
+            if ai_unlocked:
+                ai_unlocked_count += 1
+            specialty = agent.get("specialty")
+            if not specialty:
+                meta = agent.get("meta", {}) if isinstance(agent.get("meta"), dict) else {}
+                specialty = meta.get("specialty") or agent.get("description") or "Operaciones urbanas"
+            specialty_counts[specialty] = specialty_counts.get(specialty, 0) + 1
+            status = agent.get("status") or ("Activo" if ai_unlocked else "En espera")
+            enriched_agents.append(
+                {
+                    "id": agent.get("id"),
+                    "name": agent.get("name"),
+                    "balance_btc_mirror": balance,
+                    "ai_unlocked": ai_unlocked,
+                    "description": agent.get("description", ""),
+                    "specialty": specialty,
+                    "status": status,
+                    "owner": agent.get("owner", "Ledger"),
+                    "meta": agent.get("meta", {}),
+                }
+            )
+
+        locked_balance = round(total_balance * 0.26, 2)
+        available_balance = round(total_balance - locked_balance, 2)
+        snapshot = {
+            "generated_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+            "agents": enriched_agents,
+            "metrics": {
+                "total_agents": len(enriched_agents),
+                "ai_unlocked_agents": ai_unlocked_count,
+                "total_balance_btc": round(total_balance, 2),
+                "available_balance_btc": available_balance,
+                "locked_balance_btc": locked_balance,
+                "specialties": specialty_counts,
+            },
+        }
+        return snapshot
        
     def quantum_synthesis(self) -> Dict:
         """Runs full quantum synthesis (Python + C++)"""
@@ -365,6 +457,10 @@ Examples:
    
     # Command: report
     subparsers.add_parser("report", help="Generate timeline report")
+
+    # Command: export-ledger
+    export_parser = subparsers.add_parser("export-ledger", help="Export agents ledger snapshot for frontend")
+    export_parser.add_argument("--output", help="Optional output path for the snapshot JSON")
    
     # Command: quantum-synthesis
     subparsers.add_parser("quantum-synthesis", help="Full quantum synthesis")
@@ -424,6 +520,13 @@ Examples:
             print(f"❌ Error: {result['python_report']['error']}")
         else:
             print("✅ Report generated in timeline_report.md")
+
+    elif args.command == "export-ledger":
+        result = orchestrator.export_ledger_snapshot(args.output)
+        if "error" in result:
+            print(f"❌ Error: {result['error']}")
+        else:
+            print(f"✅ Ledger snapshot exported to {result['path']}")
    
     elif args.command == "quantum-synthesis":
         orchestrator.quantum_synthesis()
