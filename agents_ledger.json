@@ -1,3 +1,7 @@
+<<<<<< codex/add-json-exporter-for-agents-and-metrics
+{
+  "generated_at": "2024-01-01T00:00:00Z",
+=======
 [
   {
     "id": 12,
@@ -125,12 +129,20 @@
     ],
     "generator_note": "Estructura de referencia para crear agentes en lote sin instanciar 10K en runtime."
   },
+ main
   "agents": [
     {
       "id": "bot_satoshi_mirror",
       "name": "Satoshi Mirror Bot",
       "balance_btc_mirror": 0.0,
       "ai_unlocked": false,
+ codex/add-json-exporter-for-agents-and-metrics
+      "description": "Bot enfocado en minería espejo y economía temprana.",
+      "specialty": "Minería cuántica",
+      "status": "En espera",
+      "owner": "Ledger",
+      "meta": {}
+
       "description": "Bot focused on mirror mining and early economy.",
       "expertise": "protocolos de consenso y minería espejo",
       "neural_networks": ["MirrorNet-v3", "ConsensusForge"],
@@ -139,48 +151,29 @@
       "meta": {
         "epoch_origin": "2009"
       }
+ main
     },
     {
       "id": "bot_archivist_2009",
       "name": "Archivist 2009",
       "balance_btc_mirror": 275.0,
       "ai_unlocked": true,
-      "description": "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009.",
-      "expertise": "curación histórica y análisis de documentos",
-      "neural_networks": ["ArchiveMind", "TemporalIndex"],
-      "domain_level": 6,
-      "domains": ["matemáticas avanzadas", "criptografía", "economía digital"],
-      "meta": {
-        "epoch_origin": "2009"
-      }
-    },
-    {
-      "id": "bot_quanta_fusion",
-      "name": "Quanta Fusion",
-      "balance_btc_mirror": 88.0,
-      "ai_unlocked": true,
-      "description": "Bot dedicado a simular reactores de fusión y cadenas de suministro energéticas.",
-      "expertise": "simulación termo-nuclear y control de plasma",
-      "neural_networks": ["PlasmaWeave", "FusionCore-v2"],
-      "domain_level": 9,
-      "domains": ["fusión nuclear", "energía de plasma", "ingeniería de materiales"],
-      "meta": {
-        "epoch_origin": "2041"
-      }
-    },
-    {
-      "id": "bot_quantum_oracle",
-      "name": "Quantum Oracle",
-      "balance_btc_mirror": 144.0,
-      "ai_unlocked": true,
-      "description": "Bot oráculo para predicción de estados cuánticos y riesgos computacionales.",
-      "expertise": "modelado probabilístico cuántico",
-      "neural_networks": ["Q-Oracle", "SchroedingerTrace"],
-      "domain_level": 8,
-      "domains": ["computación cuántica", "matemáticas avanzadas", "inteligencia artificial"],
-      "meta": {
-        "epoch_origin": "2035"
-      }
+      "description": "Bot responsable de sintetizar conocimiento de bitcoin.org 2009.",
+      "specialty": "Archivística temporal",
+      "status": "Activo",
+      "owner": "Ledger",
+      "meta": {}
     }
-  ]
+  ],
+  "metrics": {
+    "total_agents": 2,
+    "ai_unlocked_agents": 1,
+    "total_balance_btc": 275.0,
+    "available_balance_btc": 203.5,
+    "locked_balance_btc": 71.5,
+    "specialties": {
+      "Minería cuántica": 1,
+      "Archivística temporal": 1
+    }
+  }
 }
