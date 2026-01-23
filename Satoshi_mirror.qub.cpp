@@ -28,6 +28,86 @@ class QuantumLedger {
 private:
     QubistDict ledger_data;
     QubistString ledger_file = "agents_ledger.json";
+
+    qfunc build_domain_catalog() -> QubistList {
+        return QubistList{
+            "matemáticas avanzadas",
+            "computación cuántica",
+            "fusión nuclear",
+            "criptografía",
+            "sistemas distribuidos",
+            "economía digital",
+            "inteligencia artificial",
+            "seguridad de redes",
+            "robótica autónoma",
+            "energía de plasma",
+            "neurociencia aplicada",
+            "ingeniería de materiales"
+        };
+    }
+
+    qfunc build_example_agents() -> QubistList {
+        QubistList domains = build_domain_catalog();
+        return QubistList{
+            {
+                {"id", "bot_satoshi_mirror"},
+                {"name", "Satoshi Mirror Bot"},
+                {"balance_btc_mirror", 0.0},
+                {"ai_unlocked", false},
+                {"description", "Bot focused on mirror mining and early economy."},
+                {"expertise", "protocolos de consenso y minería espejo"},
+                {"neural_networks", QubistList{"MirrorNet-v3", "ConsensusForge"}},
+                {"domain_level", 7},
+                {"domains", QubistList{domains[5], domains[3], domains[4]}},
+                {"meta", QubistDict{{"epoch_origin", "2009"}}}
+            },
+            {
+                {"id", "bot_archivist_2009"},
+                {"name", "Archivist 2009"},
+                {"balance_btc_mirror", 275.0},
+                {"ai_unlocked", true},
+                {"description", "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009."},
+                {"expertise", "curación histórica y análisis de documentos"},
+                {"neural_networks", QubistList{"ArchiveMind", "TemporalIndex"}},
+                {"domain_level", 6},
+                {"domains", QubistList{domains[0], domains[3], domains[5]}},
+                {"meta", QubistDict{{"epoch_origin", "2009"}}}
+            },
+            {
+                {"id", "bot_quanta_fusion"},
+                {"name", "Quanta Fusion"},
+                {"balance_btc_mirror", 88.0},
+                {"ai_unlocked", true},
+                {"description", "Bot dedicado a simular reactores de fusión y cadenas de suministro energéticas."},
+                {"expertise", "simulación termo-nuclear y control de plasma"},
+                {"neural_networks", QubistList{"PlasmaWeave", "FusionCore-v2"}},
+                {"domain_level", 9},
+                {"domains", QubistList{domains[2], domains[9], domains[11]}},
+                {"meta", QubistDict{{"epoch_origin", "2041"}}}
+            },
+            {
+                {"id", "bot_quantum_oracle"},
+                {"name", "Quantum Oracle"},
+                {"balance_btc_mirror", 144.0},
+                {"ai_unlocked", true},
+                {"description", "Bot oráculo para predicción de estados cuánticos y riesgos computacionales."},
+                {"expertise", "modelado probabilístico cuántico"},
+                {"neural_networks", QubistList{"Q-Oracle", "SchroedingerTrace"}},
+                {"domain_level", 8},
+                {"domains", QubistList{domains[1], domains[0], domains[6]}},
+                {"meta", QubistDict{{"epoch_origin", "2035"}}}
+            }
+        };
+    }
+
+    qfunc build_agent_generator(QubistInt target_count = 10000) -> QubistDict {
+        QubistList samples = build_example_agents();
+        return QubistDict{
+            {"target_count", target_count},
+            {"sample_agents", samples},
+            {"generator_note", "Estructura de referencia para crear agentes en lote sin instanciar 10K en runtime."}
+        };
+    }
    
     qfunc load_json(qpath path) -> QubistDict {
         if (!std::filesystem::exists(path)) return {};
@@ -45,35 +125,31 @@ public:
         ledger_data = load_json(ledger_file);
         if (ledger_data.empty()) {
             ledger_data = {
-                {"agents", QubistList{
-                    {
-                        {"id", "bot_satoshi_mirror"},
-                        {"name", "Satoshi Mirror Bot"},
-                        {"balance_btc_mirror", 0.0},
-                        {"ai_unlocked", false},
-                        {"description", "Bot focused on mirror mining and early economy."}
-                    },
-                    {
-                        {"id", "bot_archivist_2009"},
-                        {"name", "Archivist 2009"},
-                        {"balance_btc_mirror", 275.0},
-                        {"ai_unlocked", true},
-                        {"description", "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009."}
-                    }
-                }}
+                {"domain_catalog", build_domain_catalog()},
+                {"agent_generator", build_agent_generator()},
+                {"agents", build_example_agents()}
             };
             save_json(ledger_file, ledger_data);
         }
     }
    
     qfunc add_agent(QubistString agent_id, QubistString name,
-                    QubistString description = "", QubistDict meta = {}) -> QubistBool {
+                    QubistString description = "",
+                    QubistString expertise = "generalista cuántico",
+                    QubistList neural_networks = QubistList{},
+                    QubistInt domain_level = 1,
+                    QubistList domains = QubistList{},
+                    QubistDict meta = {}) -> QubistBool {
        
         for (auto& agent : ledger_data["agents"]) {
             if (agent["id"] == agent_id) {
                 std::cout << "[i] Agent " << agent_id << " already exists. Updating." << std::endl;
                
                 agent["description"] = description;
+                agent["expertise"] = expertise;
+                agent["neural_networks"] = neural_networks;
+                agent["domain_level"] = domain_level;
+                agent["domains"] = domains;
                 agent["meta"] = meta;
                 agent["name"] = name;
                
@@ -88,6 +164,10 @@ public:
             {"balance_btc_mirror", 0.0},
             {"ai_unlocked", true},
             {"description", description},
+            {"expertise", expertise},
+            {"neural_networks", neural_networks},
+            {"domain_level", domain_level},
+            {"domains", domains},
             {"meta", meta}
         };
        
