@@ -253,6 +253,85 @@
         margin-top: 8px;
       }
 
+      .callout {
+        background: rgba(78, 242, 255, 0.08);
+        border: 1px solid rgba(78, 242, 255, 0.3);
+        border-radius: 12px;
+        padding: 14px 16px;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .callout strong {
+        color: var(--text);
+      }
+
+      .inline-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .inline-actions button {
+        flex: 1 1 160px;
+      }
+
+      .wallet-status {
+        display: grid;
+        gap: 6px;
+        font-size: 0.95rem;
+      }
+
+      .wallet-status span {
+        color: var(--muted);
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .list-item {
+        border: 1px solid rgba(78, 242, 255, 0.2);
+        border-radius: 12px;
+        padding: 12px;
+        background: rgba(6, 10, 20, 0.6);
+      }
+
+      .list-item h3 {
+        margin: 0 0 6px;
+        font-size: 1rem;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(55, 246, 178, 0.5);
+        color: var(--success);
+      }
+
+      .status-pill.warn {
+        border-color: rgba(255, 107, 136, 0.5);
+        color: var(--danger);
+      }
+
+      .status-pill.neutral {
+        border-color: rgba(78, 242, 255, 0.4);
+        color: var(--neon);
+      }
+
+      .divider {
+        height: 1px;
+        width: 100%;
+        background: rgba(78, 242, 255, 0.12);
+        margin: 12px 0;
+      }
+
       @media (max-width: 720px) {
         header {
           flex-direction: column;
@@ -291,6 +370,28 @@
       </header>
 
       <main>
+        <section class="panel" aria-labelledby="mission-title">
+          <h2 id="mission-title">Ciudad viva: bots + personas</h2>
+          <p class="callout">
+            <strong>Objetivo:</strong> todo lo que ves en la web debe conectarse a infraestructura real. Esta versión ya
+            permite operar con wallet Web3, registrar proyectos y coordinar bots desde la interfaz. Puedes enlazar tu
+            API de producción para que Netlify funcione como panel completo.
+          </p>
+          <div class="grid">
+            <div>
+              <label for="api-base">API base (opcional)</label>
+              <input id="api-base" type="url" placeholder="https://api.tuciudad.com" aria-label="API base" />
+              <p class="helper-text">Si defines una API, las acciones se enviarán a producción automáticamente.</p>
+            </div>
+            <div class="wallet-status" aria-live="polite">
+              <strong>Estado de infraestructura</strong>
+              <div><span>API:</span> <span id="api-status">Sin configurar</span></div>
+              <div><span>Wallet:</span> <span id="wallet-status">No conectada</span></div>
+              <div><span>Red:</span> <span id="network-status">Desconocida</span></div>
+            </div>
+          </div>
+        </section>
+
         <section class="grid">
           <article class="panel" aria-labelledby="balance-title">
             <h2 id="balance-title">Balance</h2>
@@ -316,6 +417,9 @@
           <article class="panel" aria-labelledby="send-title">
             <h2 id="send-title">Enviar / Recibir</h2>
             <div class="actions">
+              <button type="button" class="secondary" data-action="connect-wallet" aria-label="Conectar wallet Web3">
+                Conectar wallet Web3
+              </button>
               <div>
                 <label for="send-to">Dirección destino</label>
                 <input id="send-to" type="text" placeholder="sat://wallet/0x..." aria-label="Dirección destino" />
@@ -466,6 +570,48 @@
           </article>
         </section>
 
+        <section class="grid">
+          <article class="panel" aria-labelledby="bots-title">
+            <h2 id="bots-title">Bots en acción</h2>
+            <div class="actions">
+              <div>
+                <label for="bot-task">Tarea del bot</label>
+                <input id="bot-task" type="text" placeholder="Ej: limpiar avenida, reparar luminaria" />
+              </div>
+              <div>
+                <label for="bot-budget">Presupuesto (₿)</label>
+                <input id="bot-budget" type="number" min="0" step="0.01" placeholder="0.00" />
+              </div>
+              <button type="button" data-action="deploy-bot">Desplegar bot</button>
+              <button type="button" class="secondary" data-action="toggle-autopay">Auto-pago coordinado</button>
+              <p class="helper-text" id="autopay-status">Auto-pago: apagado</p>
+            </div>
+            <div class="divider"></div>
+            <div class="list" id="bot-list" aria-live="polite"></div>
+          </article>
+
+          <article class="panel" aria-labelledby="projects-title">
+            <h2 id="projects-title">Programar y subir proyectos</h2>
+            <div class="actions">
+              <div>
+                <label for="project-name">Nombre del proyecto</label>
+                <input id="project-name" type="text" placeholder="Ej: Jardín solar comunitario" />
+              </div>
+              <div>
+                <label for="project-desc">Descripción técnica</label>
+                <textarea id="project-desc" rows="3" placeholder="Describe cómo mejora la ciudad..."></textarea>
+              </div>
+              <div>
+                <label for="project-code">Código / Script</label>
+                <textarea id="project-code" rows="4" placeholder="// pega tu código aquí"></textarea>
+              </div>
+              <button type="button" data-action="publish-project">Publicar proyecto</button>
+            </div>
+            <div class="divider"></div>
+            <div class="list" id="project-list" aria-live="polite"></div>
+          </article>
+        </section>
+
         <section class="panel" aria-labelledby="advanced-security-title">
           <h2 id="advanced-security-title">Configuración avanzada de seguridad</h2>
           <div class="grid">
@@ -494,5 +640,268 @@
         </section>
       </main>
     </div>
+    <script>
+      const storage = {
+        get(key, fallback) {
+          try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : fallback;
+          } catch (error) {
+            return fallback;
+          }
+        },
+        set(key, value) {
+          localStorage.setItem(key, JSON.stringify(value));
+        },
+      };
+
+      const state = {
+        apiBase: storage.get("apiBase", ""),
+        bots: storage.get("bots", []),
+        projects: storage.get("projects", []),
+        wallet: {
+          connected: false,
+          address: null,
+          chainId: null,
+        },
+        autopay: storage.get("autopay", false),
+      };
+
+      const apiBaseInput = document.getElementById("api-base");
+      const apiStatus = document.getElementById("api-status");
+      const walletStatus = document.getElementById("wallet-status");
+      const networkStatus = document.getElementById("network-status");
+      const botList = document.getElementById("bot-list");
+      const projectList = document.getElementById("project-list");
+      const autopayStatus = document.getElementById("autopay-status");
+
+      const formatAddress = (address) => (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "—");
+
+      const updateInfra = () => {
+        apiStatus.textContent = state.apiBase ? state.apiBase : "Sin configurar";
+        walletStatus.textContent = state.wallet.connected ? formatAddress(state.wallet.address) : "No conectada";
+        networkStatus.textContent = state.wallet.chainId ? state.wallet.chainId : "Desconocida";
+        autopayStatus.textContent = state.autopay ? "Auto-pago: activo" : "Auto-pago: apagado";
+      };
+
+      const renderBots = () => {
+        botList.innerHTML = "";
+        if (!state.bots.length) {
+          botList.innerHTML = "<p class='helper-text'>Sin bots activos. Despliega uno para comenzar.</p>";
+          return;
+        }
+        state.bots.forEach((bot) => {
+          const item = document.createElement("div");
+          item.className = "list-item";
+          item.innerHTML = `
+            <h3>${bot.task}</h3>
+            <div class="stat-row"><span class="stat-label">Presupuesto</span><span class="stat-value">₿ ${bot.budget}</span></div>
+            <div class="stat-row"><span class="stat-label">Estado</span><span class="status-pill ${bot.statusClass}">${bot.status}</span></div>
+            <div class="stat-row"><span class="stat-label">Responsable</span><span class="stat-value">${bot.owner}</span></div>
+          `;
+          botList.appendChild(item);
+        });
+      };
+
+      const renderProjects = () => {
+        projectList.innerHTML = "";
+        if (!state.projects.length) {
+          projectList.innerHTML = "<p class='helper-text'>Aún no hay proyectos publicados.</p>";
+          return;
+        }
+        state.projects.forEach((project) => {
+          const item = document.createElement("div");
+          item.className = "list-item";
+          item.innerHTML = `
+            <h3>${project.name}</h3>
+            <p class="helper-text">${project.description}</p>
+            <div class="stat-row"><span class="stat-label">Autor</span><span class="stat-value">${project.owner}</span></div>
+            <div class="stat-row"><span class="stat-label">Estado</span><span class="status-pill neutral">${project.status}</span></div>
+          `;
+          projectList.appendChild(item);
+        });
+      };
+
+      const persist = () => {
+        storage.set("apiBase", state.apiBase);
+        storage.set("bots", state.bots);
+        storage.set("projects", state.projects);
+        storage.set("autopay", state.autopay);
+      };
+
+      const apiRequest = async (path, options = {}) => {
+        if (!state.apiBase) {
+          return null;
+        }
+        const response = await fetch(`${state.apiBase}${path}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          ...options,
+        });
+        if (!response.ok) {
+          throw new Error("API error");
+        }
+        return response.json();
+      };
+
+      const handleConnectWallet = async () => {
+        if (!window.ethereum) {
+          alert("Wallet Web3 no detectada. Instala MetaMask o un proveedor compatible.");
+          return;
+        }
+        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+        state.wallet.connected = true;
+        state.wallet.address = accounts[0];
+        state.wallet.chainId = await window.ethereum.request({ method: "eth_chainId" });
+        updateInfra();
+      };
+
+      const handleSend = async () => {
+        const to = document.getElementById("send-to").value.trim();
+        const amount = document.getElementById("send-amount").value.trim();
+        if (!to || !amount) {
+          alert("Completa la dirección y la cantidad.");
+          return;
+        }
+        if (!state.wallet.connected) {
+          alert("Conecta la wallet primero.");
+          return;
+        }
+        if (!window.ethereum) {
+          alert("Wallet Web3 no detectada.");
+          return;
+        }
+        const value = `0x${Math.floor(parseFloat(amount) * 1e18).toString(16)}`;
+        await window.ethereum.request({
+          method: "eth_sendTransaction",
+          params: [
+            {
+              from: state.wallet.address,
+              to,
+              value,
+            },
+          ],
+        });
+      };
+
+      const handleDeployBot = async () => {
+        const task = document.getElementById("bot-task").value.trim();
+        const budget = document.getElementById("bot-budget").value.trim();
+        if (!task || !budget) {
+          alert("Completa tarea y presupuesto.");
+          return;
+        }
+        const owner = state.wallet.connected ? formatAddress(state.wallet.address) : "Comunidad";
+        const payload = {
+          task,
+          budget,
+          owner,
+        };
+        try {
+          const apiResult = await apiRequest("/bots", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          if (apiResult) {
+            state.bots = apiResult.bots ?? state.bots;
+          } else {
+            state.bots.unshift({
+              task,
+              budget,
+              owner,
+              status: state.autopay ? "Auto-pago activo" : "En cola",
+              statusClass: state.autopay ? "neutral" : "warn",
+            });
+          }
+        } catch (error) {
+          alert("No se pudo registrar el bot en la API.");
+        }
+        persist();
+        renderBots();
+      };
+
+      const handlePublishProject = async () => {
+        const name = document.getElementById("project-name").value.trim();
+        const description = document.getElementById("project-desc").value.trim();
+        const code = document.getElementById("project-code").value.trim();
+        if (!name || !description) {
+          alert("Completa nombre y descripción.");
+          return;
+        }
+        const owner = state.wallet.connected ? formatAddress(state.wallet.address) : "Ciudadano";
+        const payload = { name, description, code, owner };
+        try {
+          const apiResult = await apiRequest("/projects", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+          if (apiResult) {
+            state.projects = apiResult.projects ?? state.projects;
+          } else {
+            state.projects.unshift({
+              name,
+              description,
+              owner,
+              status: "Revisión comunitaria",
+            });
+          }
+        } catch (error) {
+          alert("No se pudo publicar el proyecto en la API.");
+        }
+        persist();
+        renderProjects();
+      };
+
+      const handleAutoPay = () => {
+        state.autopay = !state.autopay;
+        persist();
+        updateInfra();
+      };
+
+      apiBaseInput.value = state.apiBase;
+      apiBaseInput.addEventListener("input", (event) => {
+        state.apiBase = event.target.value.trim();
+        persist();
+        updateInfra();
+      });
+
+      document.querySelectorAll("button[data-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const action = button.dataset.action;
+          if (action === "connect-wallet") {
+            handleConnectWallet();
+          }
+          if (action === "send") {
+            handleSend();
+          }
+          if (action === "deploy-bot") {
+            handleDeployBot();
+          }
+          if (action === "publish-project") {
+            handlePublishProject();
+          }
+          if (action === "toggle-autopay") {
+            handleAutoPay();
+          }
+        });
+      });
+
+      if (window.ethereum) {
+        window.ethereum.on("accountsChanged", (accounts) => {
+          state.wallet.address = accounts[0] ?? null;
+          state.wallet.connected = Boolean(state.wallet.address);
+          updateInfra();
+        });
+        window.ethereum.on("chainChanged", (chainId) => {
+          state.wallet.chainId = chainId;
+          updateInfra();
+        });
+      }
+
+      updateInfra();
+      renderBots();
+      renderProjects();
+    </script>
   </body>
 </html>
