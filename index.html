@@ -713,34 +713,35 @@
                 <h2 id="network-title">Estado de red</h2>
                 <div class="stat-row">
                   <span class="stat-label">Latencia</span>
-                  <span class="stat-value">42 ms</span>
+                  <span class="stat-value" id="network-latency">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Peers activos</span>
-                  <span class="stat-value">128</span>
+                  <span class="stat-value" id="network-peers">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Ancho de banda</span>
-                  <span class="stat-value">1.2 Gbps</span>
+                  <span class="stat-value">—</span>
                 </div>
                 <button type="button" class="secondary" data-action="sync" aria-label="Sincronizar red">
                   Sincronizar red
                 </button>
+                <p class="helper-text" id="network-status-message">Esperando datos de la API.</p>
               </article>
 
               <article class="panel" aria-labelledby="sync-title">
                 <h2 id="sync-title">Sincronización</h2>
                 <div class="stat-row">
                   <span class="stat-label">Altura de bloque</span>
-                  <span class="stat-value">8,492,010</span>
+                  <span class="stat-value" id="sync-height">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Progreso</span>
-                  <span class="stat-value">97%</span>
+                  <span class="stat-value" id="sync-progress">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Tiempo estimado</span>
-                  <span class="stat-value">7 min</span>
+                  <span class="stat-value">—</span>
                 </div>
                 <div class="status-tags">
                   <span class="tag success">Canal cuántico estable</span>
@@ -954,6 +955,11 @@
       const apiStatus = document.getElementById("api-status");
       const walletStatus = document.getElementById("wallet-status");
       const networkStatus = document.getElementById("network-status");
+      const networkLatency = document.getElementById("network-latency");
+      const networkPeers = document.getElementById("network-peers");
+      const networkStatusMessage = document.getElementById("network-status-message");
+      const syncHeight = document.getElementById("sync-height");
+      const syncProgress = document.getElementById("sync-progress");
       const botList = document.getElementById("bot-list");
       const projectList = document.getElementById("project-list");
       const autopayStatus = document.getElementById("autopay-status");
@@ -988,6 +994,58 @@
         walletStatus.textContent = state.wallet.connected ? formatAddress(state.wallet.address) : "No conectada";
         networkStatus.textContent = state.wallet.chainId ? state.wallet.chainId : "Desconocida";
         autopayStatus.textContent = state.autopay ? "Auto-pago: activo" : "Auto-pago: apagado";
+      };
+
+      const setNetworkStatusMessage = (message, tone = "info") => {
+        if (!networkStatusMessage) {
+          return;
+        }
+        networkStatusMessage.textContent = message;
+        networkStatusMessage.classList.toggle("warn", tone === "warn");
+      };
+
+      const resetNetworkMetrics = () => {
+        if (networkLatency) {
+          networkLatency.textContent = "—";
+        }
+        if (networkPeers) {
+          networkPeers.textContent = "—";
+        }
+        if (syncHeight) {
+          syncHeight.textContent = "—";
+        }
+        if (syncProgress) {
+          syncProgress.textContent = "—";
+        }
+      };
+
+      const loadNetworkStatus = async () => {
+        if (!networkLatency || !networkPeers || !syncHeight || !syncProgress) {
+          return;
+        }
+        if (!state.apiBase) {
+          resetNetworkMetrics();
+          setNetworkStatusMessage("API no configurada para consultar la red.", "warn");
+          return;
+        }
+        try {
+          const status = await apiRequest("/api/network/status");
+          if (!status || status.ok === false) {
+            throw new Error(status?.error || "API sin respuesta");
+          }
+          networkLatency.textContent =
+            typeof status.latency_ms === "number" ? `${Math.round(status.latency_ms)} ms` : "—";
+          networkPeers.textContent = Number.isFinite(status.peers) ? formatCount(status.peers) : "—";
+          syncHeight.textContent = Number.isFinite(status.block_height) ? formatCount(status.block_height) : "—";
+          syncProgress.textContent =
+            typeof status.sync_progress_percent === "number"
+              ? `${Math.round(status.sync_progress_percent)}%`
+              : "—";
+          setNetworkStatusMessage("Estado actualizado desde la API.");
+        } catch (error) {
+          resetNetworkMetrics();
+          setNetworkStatusMessage("Error al consultar la red. Verifica la API.", "warn");
+        }
       };
 
       const updateFullscreenUI = (supported) => {
@@ -1468,6 +1526,7 @@
         state.apiBase = event.target.value.trim();
         persist();
         updateInfra();
+        loadNetworkStatus();
       });
 
       document.querySelectorAll("button[data-action]").forEach((button) => {
@@ -1547,6 +1606,8 @@
       updateTerminal();
       loadLedgerSnapshot();
       setInterval(updateTerminal, 3500);
+      loadNetworkStatus();
+      setInterval(loadNetworkStatus, 30000);
 
       loadTerminalLedger().then(() => {
         updateTerminal();
