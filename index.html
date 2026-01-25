@@ -372,6 +372,30 @@
         margin-top: 8px;
       }
 
+      .helper-text.warn {
+        color: var(--danger);
+      }
+
+      .feedback {
+        margin: 0;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(78, 242, 255, 0.35);
+        background: rgba(78, 242, 255, 0.08);
+        color: var(--text);
+        font-size: 0.9rem;
+      }
+
+      .feedback.success {
+        border-color: rgba(55, 246, 178, 0.5);
+        color: var(--success);
+      }
+
+      .feedback.warn {
+        border-color: rgba(255, 107, 136, 0.5);
+        color: var(--danger);
+      }
+
       .callout {
         background: rgba(78, 242, 255, 0.08);
         border: 1px solid rgba(78, 242, 255, 0.3);
@@ -576,6 +600,11 @@
               </div>
             </section>
 
+            <section class="panel" aria-labelledby="feedback-title">
+              <h2 id="feedback-title">Centro de alertas</h2>
+              <p class="feedback" id="action-feedback" aria-live="polite">Sin eventos recientes.</p>
+            </section>
+
             <section class="grid">
               <article class="panel" aria-labelledby="balance-title">
                 <h2 id="balance-title">Balance</h2>
@@ -623,11 +652,11 @@
                 <h2 id="activity-title">Actividad</h2>
                 <div class="stat-row">
                   <span class="stat-label">Última transacción</span>
-                  <span class="stat-value">hace 2 min</span>
+                  <span class="stat-value" id="last-transaction">hace 2 min</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Operaciones pendientes</span>
-                  <span class="stat-value">3</span>
+                  <span class="stat-value" id="pending-ops">3</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Agentes activos</span>
@@ -848,6 +877,7 @@
                     Activar lockdown
                   </button>
                 </div>
+                <p class="helper-text" id="lockdown-status">Lockdown: inactivo</p>
               </article>
             </section>
           </div>
@@ -912,6 +942,12 @@
           chainId: null,
         },
         autopay: storage.get("autopay", false),
+        settings: storage.get("settings", {
+          routing: "Auto",
+          quantum: "Q-Flux",
+          threshold: "",
+        }),
+        lockdown: storage.get("lockdown", false),
       };
 
       const apiBaseInput = document.getElementById("api-base");
@@ -921,12 +957,19 @@
       const botList = document.getElementById("bot-list");
       const projectList = document.getElementById("project-list");
       const autopayStatus = document.getElementById("autopay-status");
+      const actionFeedback = document.getElementById("action-feedback");
       const terminalLog = document.getElementById("terminal-log");
       const terminalClock = document.getElementById("terminal-clock");
       const metricTotalBalance = document.getElementById("metric-total-balance");
       const metricAvailableBalance = document.getElementById("metric-available-balance");
       const metricLockedBalance = document.getElementById("metric-locked-balance");
       const metricActiveAgents = document.getElementById("metric-active-agents");
+      const lastTransaction = document.getElementById("last-transaction");
+      const pendingOps = document.getElementById("pending-ops");
+      const routingSelect = document.getElementById("routing");
+      const quantumSelect = document.getElementById("quantum");
+      const thresholdInput = document.getElementById("threshold");
+      const lockdownStatus = document.getElementById("lockdown-status");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabContents = document.querySelectorAll(".tab-content");
       const fullscreenToggle = document.getElementById("fullscreen-toggle");
@@ -967,6 +1010,26 @@
         fullscreenToggle.setAttribute("aria-pressed", String(isActive));
         fullscreenStatus.textContent = isActive ? "Pantalla completa: activa" : "Pantalla completa: inactiva";
         fullscreenStatus.className = `status-pill ${isActive ? "success" : "neutral"}`;
+      const updateSecurityStatus = () => {
+        if (!lockdownStatus) {
+          return;
+        }
+        lockdownStatus.textContent = state.lockdown ? "Lockdown: activo" : "Lockdown: inactivo";
+        lockdownStatus.classList.toggle("warn", state.lockdown);
+      };
+
+      const setFeedback = (message, tone = "info") => {
+        if (!actionFeedback) {
+          return;
+        }
+        actionFeedback.textContent = message;
+        actionFeedback.classList.remove("success", "warn");
+        if (tone === "success") {
+          actionFeedback.classList.add("success");
+        }
+        if (tone === "warn") {
+          actionFeedback.classList.add("warn");
+        }
       };
 
       const terminalLedgerFallback = [
@@ -1073,6 +1136,8 @@
         storage.set("bots", state.bots);
         storage.set("projects", state.projects);
         storage.set("autopay", state.autopay);
+        storage.set("settings", state.settings);
+        storage.set("lockdown", state.lockdown);
       };
 
       const apiRequest = async (path, options = {}) => {
@@ -1129,6 +1194,128 @@
             },
           ],
         });
+      };
+
+      const handleReceive = async () => {
+        if (!state.wallet.connected && !state.apiBase) {
+          setFeedback("Define una API o conecta la wallet para generar una dirección de recepción.", "warn");
+          return;
+        }
+        const fallbackAddress = state.wallet.address || `sat://${Math.random().toString(36).slice(2, 10)}`;
+        let receiveAddress = fallbackAddress;
+        try {
+          const apiResult = await apiRequest("/wallet/receive", {
+            method: "POST",
+            body: JSON.stringify({ address: state.wallet.address }),
+          });
+          if (apiResult?.address) {
+            receiveAddress = apiResult.address;
+          }
+        } catch (error) {
+          setFeedback("No se pudo generar el QR en la API, usando dirección local.", "warn");
+        }
+        setFeedback(`Recepción lista: ${receiveAddress}`, "success");
+      };
+
+      const handleActivity = async () => {
+        let latestLabel = "hace 0 min";
+        const currentPending = Number(pendingOps?.textContent ?? 0);
+        let pending = Number.isFinite(currentPending) ? currentPending : 0;
+        if (state.apiBase) {
+          try {
+            const apiResult = await apiRequest("/activity");
+            if (apiResult) {
+              latestLabel = apiResult.last_activity ?? latestLabel;
+              pending = apiResult.pending ?? pending;
+            }
+          } catch (error) {
+            setFeedback("No se pudo cargar actividad desde la API.", "warn");
+          }
+        }
+        if (lastTransaction) {
+          lastTransaction.textContent = latestLabel;
+        }
+        if (pendingOps) {
+          pendingOps.textContent = pending;
+        }
+        setFeedback("Actividad actualizada con los últimos movimientos.", "success");
+      };
+
+      const handleSaveSettings = async () => {
+        const routing = routingSelect?.value ?? "Auto";
+        const quantum = quantumSelect?.value ?? "Q-Flux";
+        const threshold = thresholdInput?.value.trim() ?? "";
+        if (threshold && Number(threshold) <= 0) {
+          setFeedback("El umbral debe ser un número positivo.", "warn");
+          return;
+        }
+        state.settings = { routing, quantum, threshold };
+        persist();
+        if (state.apiBase) {
+          try {
+            await apiRequest("/settings", {
+              method: "POST",
+              body: JSON.stringify(state.settings),
+            });
+          } catch (error) {
+            setFeedback("No se pudo guardar la configuración en la API.", "warn");
+            return;
+          }
+        }
+        setFeedback("Configuración avanzada guardada.", "success");
+      };
+
+      const handleExport = async () => {
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          apiBase: state.apiBase,
+          wallet: state.wallet,
+          bots: state.bots,
+          projects: state.projects,
+          settings: state.settings,
+          lockdown: state.lockdown,
+        };
+        if (state.apiBase) {
+          try {
+            await apiRequest("/export", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+          } catch (error) {
+            setFeedback("No se pudo exportar en la API, se descargará localmente.", "warn");
+          }
+        }
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "satoshi-world-export.json";
+        link.click();
+        URL.revokeObjectURL(url);
+        setFeedback("Exportación lista. Archivo descargado.", "success");
+      };
+
+      const handleLockdown = async () => {
+        if (state.lockdown) {
+          setFeedback("El lockdown ya está activo en este panel.", "warn");
+          return;
+        }
+        const confirmLockdown = window.confirm("¿Quieres activar el lockdown total de seguridad?");
+        if (!confirmLockdown) {
+          return;
+        }
+        state.lockdown = true;
+        persist();
+        updateSecurityStatus();
+        if (state.apiBase) {
+          try {
+            await apiRequest("/security/lockdown", { method: "POST" });
+          } catch (error) {
+            setFeedback("Lockdown activado localmente, pero falló en la API.", "warn");
+            return;
+          }
+        }
+        setFeedback("Lockdown activado. Protocolos de seguridad reforzados.", "success");
       };
 
       const handleDeployBot = async () => {
@@ -1268,6 +1455,15 @@
       });
 
       apiBaseInput.value = state.apiBase;
+      if (routingSelect) {
+        routingSelect.value = state.settings.routing;
+      }
+      if (quantumSelect) {
+        quantumSelect.value = state.settings.quantum;
+      }
+      if (thresholdInput) {
+        thresholdInput.value = state.settings.threshold;
+      }
       apiBaseInput.addEventListener("input", (event) => {
         state.apiBase = event.target.value.trim();
         persist();
@@ -1275,22 +1471,37 @@
       });
 
       document.querySelectorAll("button[data-action]").forEach((button) => {
-        button.addEventListener("click", () => {
+        button.addEventListener("click", async () => {
           const action = button.dataset.action;
           if (action === "connect-wallet") {
-            handleConnectWallet();
+            await handleConnectWallet();
           }
           if (action === "send") {
-            handleSend();
+            await handleSend();
+          }
+          if (action === "receive") {
+            await handleReceive();
+          }
+          if (action === "activity") {
+            await handleActivity();
           }
           if (action === "deploy-bot") {
-            handleDeployBot();
+            await handleDeployBot();
           }
           if (action === "publish-project") {
-            handlePublishProject();
+            await handlePublishProject();
           }
           if (action === "toggle-autopay") {
             handleAutoPay();
+          }
+          if (action === "save-settings") {
+            await handleSaveSettings();
+          }
+          if (action === "export") {
+            await handleExport();
+          }
+          if (action === "lockdown") {
+            await handleLockdown();
           }
         });
       });
@@ -1330,18 +1541,16 @@
       }
 
       updateInfra();
+      updateSecurityStatus();
       renderBots();
       renderProjects();
- codex/add-json-exporter-for-agents-and-metrics
       updateTerminal();
       loadLedgerSnapshot();
       setInterval(updateTerminal, 3500);
 
       loadTerminalLedger().then(() => {
         updateTerminal();
-        setInterval(updateTerminal, 3500);
       });
- main
     </script>
   </body>
 </html>
