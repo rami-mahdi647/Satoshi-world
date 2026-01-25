@@ -73,6 +73,19 @@
         font-size: 0.95rem;
       }
 
+      .header-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      .header-actions button {
+        width: auto;
+        padding: 10px 16px;
+      }
+
       .switch {
         position: relative;
         width: 52px;
@@ -504,6 +517,12 @@
             <span class="slider"></span>
           </label>
           <span>Modo avanzado</span>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="secondary" id="fullscreen-toggle" aria-pressed="false">
+            Entrar en modo pantalla completa
+          </button>
+          <span class="status-pill neutral" id="fullscreen-status">Pantalla completa: inactiva</span>
         </div>
       </header>
 
@@ -953,6 +972,8 @@
       const lockdownStatus = document.getElementById("lockdown-status");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabContents = document.querySelectorAll(".tab-content");
+      const fullscreenToggle = document.getElementById("fullscreen-toggle");
+      const fullscreenStatus = document.getElementById("fullscreen-status");
 
       const formatAddress = (address) => (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "—");
       const formatBtc = (value) =>
@@ -969,6 +990,26 @@
         autopayStatus.textContent = state.autopay ? "Auto-pago: activo" : "Auto-pago: apagado";
       };
 
+      const updateFullscreenUI = (supported) => {
+        if (!fullscreenToggle || !fullscreenStatus) {
+          return;
+        }
+        if (!supported) {
+          fullscreenToggle.disabled = true;
+          fullscreenToggle.textContent = "Pantalla completa no disponible";
+          fullscreenToggle.setAttribute("aria-pressed", "false");
+          fullscreenStatus.textContent = "Pantalla completa: no soportada";
+          fullscreenStatus.className = "status-pill warn";
+          return;
+        }
+        const isActive = Boolean(document.fullscreenElement);
+        fullscreenToggle.disabled = false;
+        fullscreenToggle.textContent = isActive
+          ? "Salir de pantalla completa"
+          : "Entrar en modo pantalla completa";
+        fullscreenToggle.setAttribute("aria-pressed", String(isActive));
+        fullscreenStatus.textContent = isActive ? "Pantalla completa: activa" : "Pantalla completa: inactiva";
+        fullscreenStatus.className = `status-pill ${isActive ? "success" : "neutral"}`;
       const updateSecurityStatus = () => {
         if (!lockdownStatus) {
           return;
@@ -1464,6 +1505,28 @@
           }
         });
       });
+
+      if (fullscreenToggle) {
+        const fullscreenSupported = Boolean(document.documentElement.requestFullscreen);
+        updateFullscreenUI(fullscreenSupported);
+        fullscreenToggle.addEventListener("click", async () => {
+          if (!fullscreenSupported) {
+            alert("Tu navegador no soporta la API de pantalla completa.");
+            return;
+          }
+          try {
+            if (document.fullscreenElement) {
+              await document.exitFullscreen();
+            } else {
+              await document.documentElement.requestFullscreen();
+            }
+          } catch (error) {
+            alert("No se pudo cambiar al modo de pantalla completa.");
+          }
+        });
+        document.addEventListener("fullscreenchange", () => updateFullscreenUI(fullscreenSupported));
+        document.addEventListener("fullscreenerror", () => updateFullscreenUI(fullscreenSupported));
+      }
 
       if (window.ethereum) {
         window.ethereum.on("accountsChanged", (accounts) => {
