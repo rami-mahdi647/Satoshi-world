@@ -1,0 +1,17 @@
+{
+  "name": "Satoshi World",
+  "short_name": "Satoshi",
+  "description": "Panel de control cyberpunk para operaciones urbanas y bots comunitarios.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#05070c",
+  "theme_color": "#05070c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

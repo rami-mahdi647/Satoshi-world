@@ -1,0 +1,25 @@
+{
+  "base_url": "https://api.tuciudad.com",
+  "endpoints": {
+    "/bots": {
+      "methods": ["GET", "POST"],
+      "description": "Lista bots activos o registra un nuevo bot con task, budget y owner.",
+      "response_shape": {"bots": []}
+    },
+    "/projects": {
+      "methods": ["GET", "POST"],
+      "description": "Lista proyectos o publica un proyecto con name, description, code y owner.",
+      "response_shape": {"projects": []}
+    },
+    "/wallet/receive": {
+      "methods": ["POST"],
+      "description": "Genera una dirección de recepción o QR para fondos.",
+      "response_shape": {"address": "sat://wallet/0x..."}
+    },
+    "/activity": {
+      "methods": ["GET"],
+      "description": "Devuelve actividad reciente de la red, pagos y bots.",
+      "response_shape": {"activity": []}
+    }
+  }
+}
