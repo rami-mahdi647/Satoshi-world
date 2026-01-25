@@ -186,6 +186,24 @@
         font-size: 1rem;
       }
 
+      .status-message {
+        margin: 8px 0 0;
+        font-size: 0.85rem;
+        min-height: 1.2em;
+      }
+
+      .status-message.is-loading {
+        color: var(--accent);
+      }
+
+      .status-message.is-success {
+        color: var(--success);
+      }
+
+      .status-message.is-error {
+        color: var(--danger);
+      }
+
       .terminal {
         font-family: "Share Tech Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 0.85rem;
@@ -645,6 +663,7 @@
                   <button type="button" class="secondary" data-action="receive" aria-label="Generar QR de recepción">
                     Generar QR de recepción
                   </button>
+                  <p class="status-message" id="send-status" aria-live="polite"></p>
                 </div>
               </article>
 
@@ -675,6 +694,7 @@
                 >
                   Ver actividad completa
                 </button>
+                <p class="status-message" id="activity-status" aria-live="polite"></p>
               </article>
             </section>
 
@@ -695,6 +715,7 @@
                     Auto-pago coordinado
                   </button>
                   <p class="helper-text" id="autopay-status">Auto-pago: apagado</p>
+                  <p class="status-message" id="bot-status" aria-live="polite"></p>
                 </div>
                 <div class="divider"></div>
                 <div class="list" id="bot-list" aria-live="polite"></div>
@@ -867,7 +888,12 @@
                     <label for="project-code">Código / Script</label>
                     <textarea id="project-code" rows="4" placeholder="// pega tu código aquí"></textarea>
                   </div>
+ 
+                  <button type="button" data-action="publish-project">Publicar proyecto</button>
+                  <p class="status-message" id="project-status" aria-live="polite"></p>
+
                   <button type="button" data-action="publish-project" data-requires-api="true">Publicar proyecto</button>
+ 
                 </div>
                 <div class="divider"></div>
                 <div class="list" id="project-list" aria-live="polite"></div>
@@ -992,6 +1018,10 @@
       const metricAvailableBalance = document.getElementById("metric-available-balance");
       const metricLockedBalance = document.getElementById("metric-locked-balance");
       const metricActiveAgents = document.getElementById("metric-active-agents");
+      const sendStatus = document.getElementById("send-status");
+      const botStatus = document.getElementById("bot-status");
+      const projectStatus = document.getElementById("project-status");
+      const activityStatus = document.getElementById("activity-status");
       const metricPreferredNode = document.getElementById("metric-preferred-node");
       const lastTransaction = document.getElementById("last-transaction");
       const pendingOps = document.getElementById("pending-ops");
@@ -1020,6 +1050,38 @@
           maximumFractionDigits: 2,
         }).format(value ?? 0)}`;
       const formatCount = (value) => new Intl.NumberFormat("es-ES").format(value ?? 0);
+
+      const setStatus = (element, status, message) => {
+        if (!element) {
+          return;
+        }
+        element.textContent = message ?? "";
+        element.classList.remove("is-loading", "is-success", "is-error");
+        if (status) {
+          element.classList.add(`is-${status}`);
+        }
+      };
+
+      const sanitizeAddressInput = (value) => value.replace(/\s+/g, "");
+
+      const isValidAddress = (value) => {
+        if (!value) {
+          return false;
+        }
+        const normalized = value.trim();
+        const ethRegex = /^0x[a-fA-F0-9]{40}$/;
+        const satRegex = /^sat:\/\/[a-zA-Z0-9/_-]+$/;
+        return ethRegex.test(normalized) || satRegex.test(normalized);
+      };
+
+      const parseAmount = (value) => {
+        const normalized = value.replace(",", ".");
+        const parsed = Number.parseFloat(normalized);
+        if (Number.isNaN(parsed) || parsed <= 0) {
+          return null;
+        }
+        return parsed;
+      };
 
       const updateInfra = () => {
         if (!state.apiBase) {
@@ -1419,6 +1481,17 @@
         if (!state.apiBase) {
           return null;
         }
+ codex/document-api-endpoints-and-error-handling
+        const response = await fetch(`${state.apiBase}${path}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          ...options,
+        });
+        if (!response.ok) {
+          const message = await response.text();
+          throw new Error(message || "API error");
+
         try {
           const response = await fetch(`${state.apiBase}${path}`, {
             headers: {
@@ -1437,47 +1510,89 @@
           state.apiOnline = false;
           updateInfra();
           throw error;
+ main
+        }
+      };
+
+      const requestWithStatus = async (element, path, options, labels) => {
+        if (!state.apiBase) {
+          setStatus(element, "error", labels?.missing ?? "Define una API base primero.");
+          return null;
+        }
+        setStatus(element, "loading", labels?.loading ?? "Conectando con la API...");
+        try {
+          const result = await apiRequest(path, options);
+          setStatus(element, "success", labels?.success ?? "Respuesta recibida.");
+          return result;
+        } catch (error) {
+          const detail = error?.message ? ` ${error.message}` : "";
+          setStatus(element, "error", `${labels?.error ?? "Error en la API."}${detail}`);
+          return null;
         }
       };
 
       const handleConnectWallet = async () => {
         if (!window.ethereum) {
-          alert("Wallet Web3 no detectada. Instala MetaMask o un proveedor compatible.");
+          setStatus(sendStatus, "error", "Wallet Web3 no detectada. Instala MetaMask o un proveedor compatible.");
           return;
         }
-        const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-        state.wallet.connected = true;
-        state.wallet.address = accounts[0];
-        state.wallet.chainId = await window.ethereum.request({ method: "eth_chainId" });
-        updateInfra();
+        setStatus(sendStatus, "loading", "Conectando wallet...");
+        try {
+          const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+          state.wallet.connected = true;
+          state.wallet.address = accounts[0];
+          state.wallet.chainId = await window.ethereum.request({ method: "eth_chainId" });
+          updateInfra();
+          setStatus(sendStatus, "success", "Wallet conectada.");
+        } catch (error) {
+          setStatus(sendStatus, "error", "No se pudo conectar la wallet.");
+        }
       };
 
       const handleSend = async () => {
-        const to = document.getElementById("send-to").value.trim();
-        const amount = document.getElementById("send-amount").value.trim();
-        if (!to || !amount) {
-          alert("Completa la dirección y la cantidad.");
+        const toInput = document.getElementById("send-to");
+        const amountInput = document.getElementById("send-amount");
+        const to = sanitizeAddressInput(toInput.value.trim());
+        const amountRaw = amountInput.value.trim();
+        const amount = parseAmount(amountRaw);
+        toInput.value = to;
+        if (!to || !amountRaw) {
+          setStatus(sendStatus, "error", "Completa la dirección y la cantidad.");
+          return;
+        }
+        if (!isValidAddress(to)) {
+          setStatus(sendStatus, "error", "Dirección inválida. Usa formato 0x... o sat://");
+          return;
+        }
+        if (!amount) {
+          setStatus(sendStatus, "error", "Cantidad inválida. Usa un valor mayor a 0.");
           return;
         }
         if (!state.wallet.connected) {
-          alert("Conecta la wallet primero.");
+          setStatus(sendStatus, "error", "Conecta la wallet primero.");
           return;
         }
         if (!window.ethereum) {
-          alert("Wallet Web3 no detectada.");
+          setStatus(sendStatus, "error", "Wallet Web3 no detectada.");
           return;
         }
-        const value = `0x${Math.floor(parseFloat(amount) * 1e18).toString(16)}`;
-        await window.ethereum.request({
-          method: "eth_sendTransaction",
-          params: [
-            {
-              from: state.wallet.address,
-              to,
-              value,
-            },
-          ],
-        });
+        setStatus(sendStatus, "loading", "Enviando transacción...");
+        const value = `0x${Math.floor(amount * 1e18).toString(16)}`;
+        try {
+          await window.ethereum.request({
+            method: "eth_sendTransaction",
+            params: [
+              {
+                from: state.wallet.address,
+                to,
+                value,
+              },
+            ],
+          });
+          setStatus(sendStatus, "success", "Transacción enviada.");
+        } catch (error) {
+          setStatus(sendStatus, "error", "No se pudo enviar la transacción.");
+        }
       };
 
       const handleReceive = async () => {
@@ -1609,28 +1724,58 @@
           return;
         }
         const task = document.getElementById("bot-task").value.trim();
-        const budget = document.getElementById("bot-budget").value.trim();
-        if (!task || !budget) {
-          alert("Completa tarea y presupuesto.");
+        const budgetRaw = document.getElementById("bot-budget").value.trim();
+        const budget = parseAmount(budgetRaw);
+        if (!task || !budgetRaw) {
+          setStatus(botStatus, "error", "Completa tarea y presupuesto.");
+          return;
+        }
+        if (!budget) {
+          setStatus(botStatus, "error", "Presupuesto inválido. Usa un valor mayor a 0.");
           return;
         }
         const owner = state.wallet.connected ? formatAddress(state.wallet.address) : "Comunidad";
         const payload = {
           task,
-          budget,
+          budget: budget.toFixed(2),
           owner,
         };
-        try {
-          const apiResult = await apiRequest("/bots", {
-            method: "POST",
-            body: JSON.stringify(payload),
+        let apiResult = null;
+        if (state.apiBase) {
+          apiResult = await requestWithStatus(
+            botStatus,
+            "/bots",
+            {
+              method: "POST",
+              body: JSON.stringify(payload),
+            },
+            {
+              loading: "Registrando bot...",
+              success: "Bot registrado.",
+              error: "No se pudo registrar el bot en la API.",
+            },
+          );
+        }
+        if (apiResult) {
+          state.bots = apiResult.bots ?? state.bots;
+        } else {
+          state.bots.unshift({
+            task,
+            budget: budget.toFixed(2),
+            owner,
+            status: state.autopay ? "Auto-pago activo" : "En cola",
+            statusClass: state.autopay ? "neutral" : "warn",
           });
+ codex/document-api-endpoints-and-error-handling
+          setStatus(botStatus, "success", "Bot registrado localmente.");
+
           if (apiResult) {
             state.bots = apiResult.bots ?? state.bots;
           }
         } catch (error) {
           alert("No se pudo registrar el bot en la API.");
           return;
+ main
         }
         persist();
         renderBots();
@@ -1644,25 +1789,81 @@
         const description = document.getElementById("project-desc").value.trim();
         const code = document.getElementById("project-code").value.trim();
         if (!name || !description) {
-          alert("Completa nombre y descripción.");
+          setStatus(projectStatus, "error", "Completa nombre y descripción.");
           return;
         }
         const owner = state.wallet.connected ? formatAddress(state.wallet.address) : "Ciudadano";
         const payload = { name, description, code, owner };
-        try {
-          const apiResult = await apiRequest("/projects", {
-            method: "POST",
-            body: JSON.stringify(payload),
+        let apiResult = null;
+        if (state.apiBase) {
+          apiResult = await requestWithStatus(
+            projectStatus,
+            "/projects",
+            {
+              method: "POST",
+              body: JSON.stringify(payload),
+            },
+            {
+              loading: "Publicando proyecto...",
+              success: "Proyecto enviado a revisión.",
+              error: "No se pudo publicar el proyecto en la API.",
+            },
+          );
+        }
+        if (apiResult) {
+          state.projects = apiResult.projects ?? state.projects;
+        } else {
+          state.projects.unshift({
+            name,
+            description,
+            owner,
+            status: "Revisión comunitaria",
           });
+ codex/document-api-endpoints-and-error-handling
+          setStatus(projectStatus, "success", "Proyecto guardado localmente.");
+
           if (apiResult) {
             state.projects = apiResult.projects ?? state.projects;
           }
         } catch (error) {
           alert("No se pudo publicar el proyecto en la API.");
           return;
+ main
         }
         persist();
         renderProjects();
+      };
+
+      const handleReceive = async () => {
+        const apiResult = await requestWithStatus(
+          sendStatus,
+          "/wallet/receive",
+          { method: "POST" },
+          {
+            loading: "Generando recepción...",
+            success: "Dirección de recepción generada.",
+            error: "No se pudo generar la dirección de recepción.",
+            missing: "Configura una API base para generar la recepción.",
+          },
+        );
+        if (apiResult?.address) {
+          const input = document.getElementById("send-to");
+          input.value = apiResult.address;
+        }
+      };
+
+      const handleActivity = async () => {
+        await requestWithStatus(
+          activityStatus,
+          "/activity",
+          { method: "GET" },
+          {
+            loading: "Cargando actividad...",
+            success: "Actividad actualizada.",
+            error: "No se pudo cargar la actividad.",
+            missing: "Configura una API base para ver la actividad.",
+          },
+        );
       };
 
       const handleAutoPay = () => {
@@ -1793,6 +1994,13 @@
           if (action === "toggle-autopay") {
             handleAutoPay();
           }
+ codex/document-api-endpoints-and-error-handling
+          if (action === "receive") {
+            handleReceive();
+          }
+          if (action === "activity") {
+            handleActivity();
+
           if (action === "save-settings") {
             await handleSaveSettings();
           }
@@ -1801,6 +2009,7 @@
           }
           if (action === "lockdown") {
             await handleLockdown();
+ main
           }
         });
       });
@@ -1843,9 +2052,18 @@
       updateSecurityStatus();
       renderBots();
       renderProjects();
+ codex/document-api-endpoints-and-error-handling
+      updateTerminal();
+      loadLedgerSnapshot();
+      loadTerminalLedger().then(() => {
+        updateTerminal();
+        setInterval(updateTerminal, 3500);
+      });
+
       refreshDashboard();
       setInterval(updateTerminal, 3500);
       setInterval(refreshDashboard, 30000);
+ main
     </script>
   </body>
 </html>

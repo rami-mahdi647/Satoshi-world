@@ -27,6 +27,19 @@ python3 Satoshi_mirror.py export-ledger
 
 El comando sobrescribe/crea `agents_ledger.json` en el directorio raíz, listo para ser servido junto a `index.html`.
 
+## Endpoints esperados para el panel
+
+El panel web (`index.html`) puede integrarse con una API externa. La configuración esperada de endpoints está
+documentada en `api_endpoints.json` e incluye rutas como:
+
+- `GET/POST /bots` — registro y listado de bots activos.
+- `GET/POST /projects` — publicación y listado de proyectos comunitarios.
+- `POST /wallet/receive` — generación de dirección/QR de recepción.
+- `GET /activity` — actividad reciente (pagos, misiones, bots).
+
+Puedes servir la API en un dominio propio y configurar su base en el campo “API base” del panel. El frontend usa
+estas rutas para registrar bots, publicar proyectos y consultar actividad.
+
 ## Python usage (Python)
 
 Example taken from `Satoshi_mirror.py` that executes a Python script with arguments:
