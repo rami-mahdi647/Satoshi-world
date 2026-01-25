@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Satoshi World maskable">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#4ef2ff" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#05070c" stop-opacity="1" />
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="#05070c" />
+  <rect x="56" y="56" width="400" height="400" rx="120" fill="url(#glow)" />
+  <circle cx="256" cy="256" r="150" fill="#0b0f1d" opacity="0.85" />
+  <path
+    d="M256 148c-50 0-92 28-92 63 0 26 24 49 59 58v38c-24-6-43-21-52-36l-30 22c17 26 48 44 82 50v36h66v-36c40-8 70-34 70-65 0-29-22-50-68-60v-39c15 5 28 15 36 26l30-21c-16-22-39-36-66-41v-33h-66v33zm0 108c-16-4-25-11-25-22 0-12 11-22 25-25v47zm38 78v-45c18 4 28 13 28 25 0 11-10 19-28 20z"
+    fill="#e3f3ff"
+  />
+</svg>

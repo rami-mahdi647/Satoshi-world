@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Satoshi World">
+  <defs>
+    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4ef2ff" />
+      <stop offset="100%" stop-color="#b44bff" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="120" fill="#05070c" />
+  <circle cx="256" cy="256" r="164" fill="url(#neon)" opacity="0.25" />
+  <path
+    d="M256 132c-54 0-98 30-98 67 0 28 26 52 63 62v40c-25-7-45-23-55-38l-34 24c18 29 52 49 89 55v38h70v-38c43-8 73-36 73-69 0-31-24-54-71-65v-41c16 6 30 16 39 28l34-23c-17-24-42-40-73-45v-35h-70v35zm0 117c-18-4-28-12-28-24 0-13 12-23 28-27v51zm40 84v-49c20 5 31 14 31 27 0 12-12 21-31 22z"
+    fill="#e3f3ff"
+  />
+</svg>

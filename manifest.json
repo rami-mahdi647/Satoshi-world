@@ -1,0 +1,22 @@
+{
+  "name": "Satoshi World",
+  "short_name": "Satoshi",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "#05070c",
+  "background_color": "#05070c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
