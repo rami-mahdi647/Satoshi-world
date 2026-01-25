@@ -610,15 +610,15 @@
                 <h2 id="balance-title">Balance</h2>
                 <div class="stat-row">
                   <span class="stat-label">Saldo total</span>
-                  <span class="stat-value" id="metric-total-balance">₿ 12.480,55</span>
+                  <span class="stat-value" id="metric-total-balance">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Disponible</span>
-                  <span class="stat-value" id="metric-available-balance">₿ 9.204,21</span>
+                  <span class="stat-value" id="metric-available-balance">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Bloqueado</span>
-                  <span class="stat-value" id="metric-locked-balance">₿ 3.276,34</span>
+                  <span class="stat-value" id="metric-locked-balance">—</span>
                 </div>
                 <div class="status-tags">
                   <span class="tag success">Bóveda cifrada</span>
@@ -652,11 +652,11 @@
                 <h2 id="activity-title">Actividad</h2>
                 <div class="stat-row">
                   <span class="stat-label">Última transacción</span>
-                  <span class="stat-value" id="last-transaction">hace 2 min</span>
+                  <span class="stat-value" id="last-transaction">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Operaciones pendientes</span>
-                  <span class="stat-value" id="pending-ops">3</span>
+                  <span class="stat-value" id="pending-ops">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Agentes activos</span>
@@ -664,9 +664,15 @@
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Nodo preferido</span>
-                  <span class="stat-value">Omega-7</span>
+                  <span class="stat-value" id="metric-preferred-node">—</span>
                 </div>
-                <button type="button" class="secondary" data-action="activity" aria-label="Ver actividad completa">
+                <button
+                  type="button"
+                  class="secondary"
+                  data-action="activity"
+                  data-requires-api="true"
+                  aria-label="Ver actividad completa"
+                >
                   Ver actividad completa
                 </button>
               </article>
@@ -684,8 +690,10 @@
                     <label for="bot-budget">Presupuesto (₿)</label>
                     <input id="bot-budget" type="number" min="0" step="0.01" placeholder="0.00" />
                   </div>
-                  <button type="button" data-action="deploy-bot">Desplegar bot</button>
-                  <button type="button" class="secondary" data-action="toggle-autopay">Auto-pago coordinado</button>
+                  <button type="button" data-action="deploy-bot" data-requires-api="true">Desplegar bot</button>
+                  <button type="button" class="secondary" data-action="toggle-autopay" data-requires-api="true">
+                    Auto-pago coordinado
+                  </button>
                   <p class="helper-text" id="autopay-status">Auto-pago: apagado</p>
                 </div>
                 <div class="divider"></div>
@@ -713,17 +721,23 @@
                 <h2 id="network-title">Estado de red</h2>
                 <div class="stat-row">
                   <span class="stat-label">Latencia</span>
-                  <span class="stat-value">42 ms</span>
+                  <span class="stat-value" id="metric-network-latency">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Peers activos</span>
-                  <span class="stat-value">128</span>
+                  <span class="stat-value" id="metric-network-peers">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Ancho de banda</span>
-                  <span class="stat-value">1.2 Gbps</span>
+                  <span class="stat-value" id="metric-network-bandwidth">—</span>
                 </div>
-                <button type="button" class="secondary" data-action="sync" aria-label="Sincronizar red">
+                <button
+                  type="button"
+                  class="secondary"
+                  data-action="sync"
+                  data-requires-api="true"
+                  aria-label="Sincronizar red"
+                >
                   Sincronizar red
                 </button>
               </article>
@@ -732,15 +746,15 @@
                 <h2 id="sync-title">Sincronización</h2>
                 <div class="stat-row">
                   <span class="stat-label">Altura de bloque</span>
-                  <span class="stat-value">8,492,010</span>
+                  <span class="stat-value" id="metric-sync-height">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Progreso</span>
-                  <span class="stat-value">97%</span>
+                  <span class="stat-value" id="metric-sync-progress">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Tiempo estimado</span>
-                  <span class="stat-value">7 min</span>
+                  <span class="stat-value" id="metric-sync-eta">—</span>
                 </div>
                 <div class="status-tags">
                   <span class="tag success">Canal cuántico estable</span>
@@ -773,21 +787,27 @@
                 <h2 id="mining-title">Minería / Quantum</h2>
                 <div class="stat-row">
                   <span class="stat-label">Rendimiento</span>
-                  <span class="stat-value">92 TH/s</span>
+                  <span class="stat-value" id="metric-mining-performance">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Núcleos activos</span>
-                  <span class="stat-value">48</span>
+                  <span class="stat-value" id="metric-mining-cores">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Eficiencia</span>
-                  <span class="stat-value">83%</span>
+                  <span class="stat-value" id="metric-mining-efficiency">—</span>
                 </div>
                 <div class="actions">
-                  <button type="button" data-action="mine" aria-label="Iniciar minería cuántica">
+                  <button type="button" data-action="mine" data-requires-api="true" aria-label="Iniciar minería cuántica">
                     Iniciar minería cuántica
                   </button>
-                  <button type="button" class="secondary" data-action="optimize" aria-label="Optimizar minería">
+                  <button
+                    type="button"
+                    class="secondary"
+                    data-action="optimize"
+                    data-requires-api="true"
+                    aria-label="Optimizar minería"
+                  >
                     Optimizar nodos
                   </button>
                 </div>
@@ -821,6 +841,7 @@
                     type="button"
                     class="secondary"
                     data-action="save-settings"
+                    data-requires-api="true"
                     aria-label="Guardar configuración avanzada"
                   >
                     Guardar configuración
@@ -846,7 +867,7 @@
                     <label for="project-code">Código / Script</label>
                     <textarea id="project-code" rows="4" placeholder="// pega tu código aquí"></textarea>
                   </div>
-                  <button type="button" data-action="publish-project">Publicar proyecto</button>
+                  <button type="button" data-action="publish-project" data-requires-api="true">Publicar proyecto</button>
                 </div>
                 <div class="divider"></div>
                 <div class="list" id="project-list" aria-live="polite"></div>
@@ -870,10 +891,16 @@
                   </div>
                 </div>
                 <div class="footer-actions">
-                  <button type="button" class="secondary" data-action="export" aria-label="Exportar configuración">
+                  <button
+                    type="button"
+                    class="secondary"
+                    data-action="export"
+                    data-requires-api="true"
+                    aria-label="Exportar configuración"
+                  >
                     Exportar configuración
                   </button>
-                  <button type="button" data-action="lockdown" aria-label="Activar lockdown">
+                  <button type="button" data-action="lockdown" data-requires-api="true" aria-label="Activar lockdown">
                     Activar lockdown
                   </button>
                 </div>
@@ -909,8 +936,8 @@
             <div class="panel">
               <h2>Atajos</h2>
               <div class="inline-actions">
-                <button type="button" class="secondary" data-action="deploy-bot">Nueva misión</button>
-                <button type="button" class="secondary" data-action="publish-project">Publicar idea</button>
+                <button type="button" class="secondary" data-action="deploy-bot" data-requires-api="true">Nueva misión</button>
+                <button type="button" class="secondary" data-action="publish-project" data-requires-api="true">Publicar idea</button>
               </div>
             </div>
           </aside>
@@ -934,6 +961,7 @@
 
       const state = {
         apiBase: storage.get("apiBase", ""),
+        apiOnline: false,
         bots: storage.get("bots", []),
         projects: storage.get("projects", []),
         wallet: {
@@ -964,8 +992,18 @@
       const metricAvailableBalance = document.getElementById("metric-available-balance");
       const metricLockedBalance = document.getElementById("metric-locked-balance");
       const metricActiveAgents = document.getElementById("metric-active-agents");
+      const metricPreferredNode = document.getElementById("metric-preferred-node");
       const lastTransaction = document.getElementById("last-transaction");
       const pendingOps = document.getElementById("pending-ops");
+      const metricNetworkLatency = document.getElementById("metric-network-latency");
+      const metricNetworkPeers = document.getElementById("metric-network-peers");
+      const metricNetworkBandwidth = document.getElementById("metric-network-bandwidth");
+      const metricSyncHeight = document.getElementById("metric-sync-height");
+      const metricSyncProgress = document.getElementById("metric-sync-progress");
+      const metricSyncEta = document.getElementById("metric-sync-eta");
+      const metricMiningPerformance = document.getElementById("metric-mining-performance");
+      const metricMiningCores = document.getElementById("metric-mining-cores");
+      const metricMiningEfficiency = document.getElementById("metric-mining-efficiency");
       const routingSelect = document.getElementById("routing");
       const quantumSelect = document.getElementById("quantum");
       const thresholdInput = document.getElementById("threshold");
@@ -984,7 +1022,11 @@
       const formatCount = (value) => new Intl.NumberFormat("es-ES").format(value ?? 0);
 
       const updateInfra = () => {
-        apiStatus.textContent = state.apiBase ? state.apiBase : "Sin configurar";
+        if (!state.apiBase) {
+          apiStatus.textContent = "Sin configurar";
+        } else {
+          apiStatus.textContent = state.apiOnline ? "En línea" : "Offline";
+        }
         walletStatus.textContent = state.wallet.connected ? formatAddress(state.wallet.address) : "No conectada";
         networkStatus.textContent = state.wallet.chainId ? state.wallet.chainId : "Desconocida";
         autopayStatus.textContent = state.autopay ? "Auto-pago: activo" : "Auto-pago: apagado";
@@ -1010,6 +1052,144 @@
         fullscreenToggle.setAttribute("aria-pressed", String(isActive));
         fullscreenStatus.textContent = isActive ? "Pantalla completa: activa" : "Pantalla completa: inactiva";
         fullscreenStatus.className = `status-pill ${isActive ? "success" : "neutral"}`;
+      };
+
+      const setOfflineMetrics = () => {
+        const offlineValue = "Offline";
+        if (metricTotalBalance) {
+          metricTotalBalance.textContent = offlineValue;
+        }
+        if (metricAvailableBalance) {
+          metricAvailableBalance.textContent = offlineValue;
+        }
+        if (metricLockedBalance) {
+          metricLockedBalance.textContent = offlineValue;
+        }
+        if (metricActiveAgents) {
+          metricActiveAgents.textContent = offlineValue;
+        }
+        if (metricPreferredNode) {
+          metricPreferredNode.textContent = offlineValue;
+        }
+        if (lastTransaction) {
+          lastTransaction.textContent = offlineValue;
+        }
+        if (pendingOps) {
+          pendingOps.textContent = offlineValue;
+        }
+        if (metricNetworkLatency) {
+          metricNetworkLatency.textContent = offlineValue;
+        }
+        if (metricNetworkPeers) {
+          metricNetworkPeers.textContent = offlineValue;
+        }
+        if (metricNetworkBandwidth) {
+          metricNetworkBandwidth.textContent = offlineValue;
+        }
+        if (metricSyncHeight) {
+          metricSyncHeight.textContent = offlineValue;
+        }
+        if (metricSyncProgress) {
+          metricSyncProgress.textContent = offlineValue;
+        }
+        if (metricSyncEta) {
+          metricSyncEta.textContent = offlineValue;
+        }
+        if (metricMiningPerformance) {
+          metricMiningPerformance.textContent = offlineValue;
+        }
+        if (metricMiningCores) {
+          metricMiningCores.textContent = offlineValue;
+        }
+        if (metricMiningEfficiency) {
+          metricMiningEfficiency.textContent = offlineValue;
+        }
+      };
+
+      const setSensitiveActionsState = (enabled) => {
+        document.querySelectorAll("[data-requires-api='true']").forEach((button) => {
+          button.disabled = !enabled;
+        });
+      };
+
+      const ensureApiOnline = (actionLabel) => {
+        if (!state.apiBase) {
+          setFeedback(`API sin configurar. ${actionLabel} bloqueada en modo offline.`, "warn");
+          return false;
+        }
+        if (!state.apiOnline) {
+          setFeedback(`API offline. ${actionLabel} bloqueada hasta recuperar conexión.`, "warn");
+          return false;
+        }
+        return true;
+      };
+
+      const applyMetrics = (metrics) => {
+        if (!metrics) {
+          return;
+        }
+        if (metricTotalBalance) {
+          metricTotalBalance.textContent = formatBtc(metrics.total_balance_btc);
+        }
+        if (metricAvailableBalance) {
+          metricAvailableBalance.textContent = formatBtc(metrics.available_balance_btc);
+        }
+        if (metricLockedBalance) {
+          metricLockedBalance.textContent = formatBtc(metrics.locked_balance_btc);
+        }
+        if (metricActiveAgents) {
+          metricActiveAgents.textContent = formatCount(metrics.active_agents ?? metrics.ai_unlocked_agents);
+        }
+        if (metricPreferredNode) {
+          metricPreferredNode.textContent = metrics.preferred_node ?? "—";
+        }
+        if (lastTransaction) {
+          lastTransaction.textContent = metrics.last_transaction ?? "—";
+        }
+        if (pendingOps) {
+          pendingOps.textContent = formatCount(metrics.pending_ops);
+        }
+      };
+
+      const applyNetworkMetrics = (network) => {
+        if (!network) {
+          return;
+        }
+        if (metricNetworkLatency) {
+          metricNetworkLatency.textContent = network.latency_ms ? `${network.latency_ms} ms` : "—";
+        }
+        if (metricNetworkPeers) {
+          metricNetworkPeers.textContent = formatCount(network.peers);
+        }
+        if (metricNetworkBandwidth) {
+          metricNetworkBandwidth.textContent = network.bandwidth_gbps ? `${network.bandwidth_gbps} Gbps` : "—";
+        }
+        if (metricSyncHeight) {
+          metricSyncHeight.textContent = formatCount(network.block_height);
+        }
+        if (metricSyncProgress) {
+          metricSyncProgress.textContent = network.sync_progress ? `${network.sync_progress}%` : "—";
+        }
+        if (metricSyncEta) {
+          metricSyncEta.textContent = network.sync_eta ?? "—";
+        }
+      };
+
+      const applyMiningMetrics = (mining) => {
+        if (!mining) {
+          return;
+        }
+        if (metricMiningPerformance) {
+          metricMiningPerformance.textContent = mining.performance_ths ? `${mining.performance_ths} TH/s` : "—";
+        }
+        if (metricMiningCores) {
+          metricMiningCores.textContent = formatCount(mining.active_cores);
+        }
+        if (metricMiningEfficiency) {
+          metricMiningEfficiency.textContent = mining.efficiency ? `${mining.efficiency}%` : "—";
+        }
+      };
+
       const updateSecurityStatus = () => {
         if (!lockdownStatus) {
           return;
@@ -1032,37 +1212,131 @@
         }
       };
 
-      const terminalLedgerFallback = [
-        { id: 12, expertise: "algoritmos de consenso", neural_networks: 18, progress: 63 },
-        { id: 42, expertise: "computación cuántica", neural_networks: 32, progress: 78 },
-        { id: 87, expertise: "ciberseguridad", neural_networks: 21, progress: 71 },
-        { id: 128, expertise: "optimización energética", neural_networks: 26, progress: 69 },
-        { id: 203, expertise: "modelos climáticos", neural_networks: 14, progress: 58 },
-        { id: 317, expertise: "bioingeniería urbana", neural_networks: 19, progress: 74 },
-        { id: 402, expertise: "logística autónoma", neural_networks: 24, progress: 80 },
-        { id: 519, expertise: "minería responsable", neural_networks: 11, progress: 55 },
-      ];
       let terminalLedger = [];
 
       const loadTerminalLedger = async () => {
+        if (!state.apiBase) {
+          terminalLedger = [];
+          return;
+        }
         try {
-          const response = await fetch("agents_ledger.json", { cache: "no-store" });
-          if (response.ok) {
-            const data = await response.json();
-            if (Array.isArray(data)) {
-              terminalLedger = data;
-            }
+          const data = await apiRequest("/terminal/ledger");
+          if (Array.isArray(data)) {
+            terminalLedger = data;
+          } else if (Array.isArray(data?.agents)) {
+            terminalLedger = data.agents;
+          } else {
+            terminalLedger = [];
           }
         } catch (error) {
           terminalLedger = [];
         }
-        if (!terminalLedger.length) {
-          terminalLedger = terminalLedgerFallback;
+      };
+
+      const setOfflineNetworkMetrics = () => {
+        const offlineValue = "Offline";
+        if (metricNetworkLatency) {
+          metricNetworkLatency.textContent = offlineValue;
         }
+        if (metricNetworkPeers) {
+          metricNetworkPeers.textContent = offlineValue;
+        }
+        if (metricNetworkBandwidth) {
+          metricNetworkBandwidth.textContent = offlineValue;
+        }
+        if (metricSyncHeight) {
+          metricSyncHeight.textContent = offlineValue;
+        }
+        if (metricSyncProgress) {
+          metricSyncProgress.textContent = offlineValue;
+        }
+        if (metricSyncEta) {
+          metricSyncEta.textContent = offlineValue;
+        }
+      };
+
+      const setOfflineMiningMetrics = () => {
+        const offlineValue = "Offline";
+        if (metricMiningPerformance) {
+          metricMiningPerformance.textContent = offlineValue;
+        }
+        if (metricMiningCores) {
+          metricMiningCores.textContent = offlineValue;
+        }
+        if (metricMiningEfficiency) {
+          metricMiningEfficiency.textContent = offlineValue;
+        }
+      };
+
+      const loadMetrics = async () => {
+        if (!state.apiBase) {
+          state.apiOnline = false;
+          setOfflineMetrics();
+          setSensitiveActionsState(false);
+          updateInfra();
+          return;
+        }
+        try {
+          const metrics = await apiRequest("/metrics");
+          state.apiOnline = true;
+          applyMetrics(metrics);
+          setSensitiveActionsState(true);
+        } catch (error) {
+          state.apiOnline = false;
+          setOfflineMetrics();
+          setSensitiveActionsState(false);
+        }
+        updateInfra();
+      };
+
+      const loadNetworkMetrics = async () => {
+        if (!state.apiBase) {
+          setOfflineNetworkMetrics();
+          return;
+        }
+        try {
+          const network = await apiRequest("/network");
+          applyNetworkMetrics(network);
+        } catch (error) {
+          setOfflineNetworkMetrics();
+        }
+      };
+
+      const loadMiningMetrics = async () => {
+        if (!state.apiBase) {
+          setOfflineMiningMetrics();
+          return;
+        }
+        try {
+          const mining = await apiRequest("/mining");
+          applyMiningMetrics(mining);
+        } catch (error) {
+          setOfflineMiningMetrics();
+        }
+      };
+
+      const refreshDashboard = async () => {
+        await loadMetrics();
+        await loadNetworkMetrics();
+        await loadMiningMetrics();
+        await loadLedgerSnapshot();
+        await loadTerminalLedger();
+        updateTerminal();
       };
 
       const renderTerminalLine = () => {
         const time = new Date().toLocaleTimeString("es-ES", { hour12: false });
+        if (!terminalLedger.length) {
+          return `
+            <div class="terminal-line">
+              <span>[${time}]</span>
+              <span>•</span>
+              <span>Terminal offline</span>
+              <span>•</span>
+              <span>Conecta la API para ver el ledger.</span>
+            </div>
+          `;
+        }
         const entry = terminalLedger[Math.floor(Math.random() * terminalLedger.length)];
         const botId = String(entry?.id ?? 0).padStart(3, "0");
         const expertise = entry?.expertise ?? "investigación distribuida";
@@ -1087,7 +1361,8 @@
         if (!terminalLog) {
           return;
         }
-        const lines = Array.from({ length: 10 }, renderTerminalLine).join("");
+        const lineCount = terminalLedger.length ? 10 : 1;
+        const lines = Array.from({ length: lineCount }, renderTerminalLine).join("");
         terminalLog.innerHTML = lines;
         terminalClock.textContent = new Date().toLocaleTimeString("es-ES", { hour12: false });
       };
@@ -1144,16 +1419,25 @@
         if (!state.apiBase) {
           return null;
         }
-        const response = await fetch(`${state.apiBase}${path}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          ...options,
-        });
-        if (!response.ok) {
-          throw new Error("API error");
+        try {
+          const response = await fetch(`${state.apiBase}${path}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            ...options,
+          });
+          if (!response.ok) {
+            throw new Error("API error");
+          }
+          const data = await response.json();
+          state.apiOnline = true;
+          updateInfra();
+          return data;
+        } catch (error) {
+          state.apiOnline = false;
+          updateInfra();
+          throw error;
         }
-        return response.json();
       };
 
       const handleConnectWallet = async () => {
@@ -1201,47 +1485,48 @@
           setFeedback("Define una API o conecta la wallet para generar una dirección de recepción.", "warn");
           return;
         }
-        const fallbackAddress = state.wallet.address || `sat://${Math.random().toString(36).slice(2, 10)}`;
-        let receiveAddress = fallbackAddress;
-        try {
-          const apiResult = await apiRequest("/wallet/receive", {
-            method: "POST",
-            body: JSON.stringify({ address: state.wallet.address }),
-          });
-          if (apiResult?.address) {
-            receiveAddress = apiResult.address;
+        let receiveAddress = state.wallet.address;
+        if (state.apiBase) {
+          try {
+            const apiResult = await apiRequest("/wallet/receive", {
+              method: "POST",
+              body: JSON.stringify({ address: state.wallet.address }),
+            });
+            if (apiResult?.address) {
+              receiveAddress = apiResult.address;
+            }
+          } catch (error) {
+            setFeedback("No se pudo generar la dirección en la API.", "warn");
+            return;
           }
-        } catch (error) {
-          setFeedback("No se pudo generar el QR en la API, usando dirección local.", "warn");
+        }
+        if (!receiveAddress) {
+          setFeedback("Conecta la wallet para generar una dirección real.", "warn");
+          return;
         }
         setFeedback(`Recepción lista: ${receiveAddress}`, "success");
       };
 
       const handleActivity = async () => {
-        let latestLabel = "hace 0 min";
-        const currentPending = Number(pendingOps?.textContent ?? 0);
-        let pending = Number.isFinite(currentPending) ? currentPending : 0;
-        if (state.apiBase) {
-          try {
-            const apiResult = await apiRequest("/activity");
-            if (apiResult) {
-              latestLabel = apiResult.last_activity ?? latestLabel;
-              pending = apiResult.pending ?? pending;
-            }
-          } catch (error) {
-            setFeedback("No se pudo cargar actividad desde la API.", "warn");
+        if (!ensureApiOnline("Actividad")) {
+          return;
+        }
+        try {
+          const apiResult = await apiRequest("/activity");
+          if (apiResult && lastTransaction && pendingOps) {
+            lastTransaction.textContent = apiResult.last_activity ?? "—";
+            pendingOps.textContent = formatCount(apiResult.pending);
           }
+          setFeedback("Actividad actualizada con los últimos movimientos.", "success");
+        } catch (error) {
+          setFeedback("No se pudo cargar actividad desde la API.", "warn");
         }
-        if (lastTransaction) {
-          lastTransaction.textContent = latestLabel;
-        }
-        if (pendingOps) {
-          pendingOps.textContent = pending;
-        }
-        setFeedback("Actividad actualizada con los últimos movimientos.", "success");
       };
 
       const handleSaveSettings = async () => {
+        if (!ensureApiOnline("Configuración avanzada")) {
+          return;
+        }
         const routing = routingSelect?.value ?? "Auto";
         const quantum = quantumSelect?.value ?? "Q-Flux";
         const threshold = thresholdInput?.value.trim() ?? "";
@@ -1251,21 +1536,22 @@
         }
         state.settings = { routing, quantum, threshold };
         persist();
-        if (state.apiBase) {
-          try {
-            await apiRequest("/settings", {
-              method: "POST",
-              body: JSON.stringify(state.settings),
-            });
-          } catch (error) {
-            setFeedback("No se pudo guardar la configuración en la API.", "warn");
-            return;
-          }
+        try {
+          await apiRequest("/settings", {
+            method: "POST",
+            body: JSON.stringify(state.settings),
+          });
+        } catch (error) {
+          setFeedback("No se pudo guardar la configuración en la API.", "warn");
+          return;
         }
         setFeedback("Configuración avanzada guardada.", "success");
       };
 
       const handleExport = async () => {
+        if (!ensureApiOnline("Exportación")) {
+          return;
+        }
         const payload = {
           exportedAt: new Date().toISOString(),
           apiBase: state.apiBase,
@@ -1275,15 +1561,14 @@
           settings: state.settings,
           lockdown: state.lockdown,
         };
-        if (state.apiBase) {
-          try {
-            await apiRequest("/export", {
-              method: "POST",
-              body: JSON.stringify(payload),
-            });
-          } catch (error) {
-            setFeedback("No se pudo exportar en la API, se descargará localmente.", "warn");
-          }
+        try {
+          await apiRequest("/export", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+        } catch (error) {
+          setFeedback("No se pudo exportar en la API.", "warn");
+          return;
         }
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -1296,6 +1581,9 @@
       };
 
       const handleLockdown = async () => {
+        if (!ensureApiOnline("Lockdown")) {
+          return;
+        }
         if (state.lockdown) {
           setFeedback("El lockdown ya está activo en este panel.", "warn");
           return;
@@ -1307,18 +1595,19 @@
         state.lockdown = true;
         persist();
         updateSecurityStatus();
-        if (state.apiBase) {
-          try {
-            await apiRequest("/security/lockdown", { method: "POST" });
-          } catch (error) {
-            setFeedback("Lockdown activado localmente, pero falló en la API.", "warn");
-            return;
-          }
+        try {
+          await apiRequest("/security/lockdown", { method: "POST" });
+        } catch (error) {
+          setFeedback("Lockdown activado localmente, pero falló en la API.", "warn");
+          return;
         }
         setFeedback("Lockdown activado. Protocolos de seguridad reforzados.", "success");
       };
 
       const handleDeployBot = async () => {
+        if (!ensureApiOnline("Despliegue de bots")) {
+          return;
+        }
         const task = document.getElementById("bot-task").value.trim();
         const budget = document.getElementById("bot-budget").value.trim();
         if (!task || !budget) {
@@ -1338,23 +1627,19 @@
           });
           if (apiResult) {
             state.bots = apiResult.bots ?? state.bots;
-          } else {
-            state.bots.unshift({
-              task,
-              budget,
-              owner,
-              status: state.autopay ? "Auto-pago activo" : "En cola",
-              statusClass: state.autopay ? "neutral" : "warn",
-            });
           }
         } catch (error) {
           alert("No se pudo registrar el bot en la API.");
+          return;
         }
         persist();
         renderBots();
       };
 
       const handlePublishProject = async () => {
+        if (!ensureApiOnline("Publicación de proyectos")) {
+          return;
+        }
         const name = document.getElementById("project-name").value.trim();
         const description = document.getElementById("project-desc").value.trim();
         const code = document.getElementById("project-code").value.trim();
@@ -1371,22 +1656,19 @@
           });
           if (apiResult) {
             state.projects = apiResult.projects ?? state.projects;
-          } else {
-            state.projects.unshift({
-              name,
-              description,
-              owner,
-              status: "Revisión comunitaria",
-            });
           }
         } catch (error) {
           alert("No se pudo publicar el proyecto en la API.");
+          return;
         }
         persist();
         renderProjects();
       };
 
       const handleAutoPay = () => {
+        if (!ensureApiOnline("Auto-pago")) {
+          return;
+        }
         state.autopay = !state.autopay;
         persist();
         updateInfra();
@@ -1426,12 +1708,11 @@
       };
 
       const loadLedgerSnapshot = async () => {
+        if (!state.apiBase) {
+          return;
+        }
         try {
-          const response = await fetch("agents_ledger.json", { cache: "no-store" });
-          if (!response.ok) {
-            return;
-          }
-          const snapshot = await response.json();
+          const snapshot = await apiRequest("/ledger/snapshot");
           applyLedgerSnapshot(snapshot);
         } catch (error) {
           // Snapshot is optional.
@@ -1468,11 +1749,29 @@
         state.apiBase = event.target.value.trim();
         persist();
         updateInfra();
+        refreshDashboard();
       });
 
       document.querySelectorAll("button[data-action]").forEach((button) => {
         button.addEventListener("click", async () => {
           const action = button.dataset.action;
+          if (button.dataset.requiresApi === "true") {
+            const actionLabel = {
+              activity: "Actividad",
+              "deploy-bot": "Despliegue de bots",
+              "toggle-autopay": "Auto-pago",
+              "save-settings": "Configuración avanzada",
+              export: "Exportación",
+              lockdown: "Lockdown",
+              "publish-project": "Publicación de proyectos",
+              sync: "Sincronización",
+              mine: "Minería",
+              optimize: "Optimización",
+            }[action] ?? "Acción";
+            if (!ensureApiOnline(actionLabel)) {
+              return;
+            }
+          }
           if (action === "connect-wallet") {
             await handleConnectWallet();
           }
@@ -1544,13 +1843,9 @@
       updateSecurityStatus();
       renderBots();
       renderProjects();
-      updateTerminal();
-      loadLedgerSnapshot();
+      refreshDashboard();
       setInterval(updateTerminal, 3500);
-
-      loadTerminalLedger().then(() => {
-        updateTerminal();
-      });
+      setInterval(refreshDashboard, 30000);
     </script>
   </body>
 </html>
