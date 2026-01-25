@@ -1,157 +1,16 @@
-<<<<<< codex/add-json-exporter-for-agents-and-metrics
 {
   "generated_at": "2024-01-01T00:00:00Z",
-=======
-[
-  {
-    "id": 12,
-    "expertise": "algoritmos de consenso",
-    "neural_networks": 18,
-    "progress": 63
-  },
-  {
-    "id": 42,
-    "expertise": "computación cuántica",
-    "neural_networks": 32,
-    "progress": 78
-  },
-  {
-    "id": 87,
-    "expertise": "ciberseguridad",
-    "neural_networks": 21,
-    "progress": 71
-  },
-  {
-    "id": 128,
-    "expertise": "optimización energética",
-    "neural_networks": 26,
-    "progress": 69
-  },
-  {
-    "id": 203,
-    "expertise": "modelos climáticos",
-    "neural_networks": 14,
-    "progress": 58
-  },
-  {
-    "id": 317,
-    "expertise": "bioingeniería urbana",
-    "neural_networks": 19,
-    "progress": 74
-  },
-  {
-    "id": 402,
-    "expertise": "logística autónoma",
-    "neural_networks": 24,
-    "progress": 80
-  },
-  {
-    "id": 519,
-    "expertise": "minería responsable",
-    "neural_networks": 11,
-    "progress": 55
-  }
-]
-{
-  "domain_catalog": [
-    "matemáticas avanzadas",
-    "computación cuántica",
-    "fusión nuclear",
-    "criptografía",
-    "sistemas distribuidos",
-    "economía digital",
-    "inteligencia artificial",
-    "seguridad de redes",
-    "robótica autónoma",
-    "energía de plasma",
-    "neurociencia aplicada",
-    "ingeniería de materiales"
-  ],
-  "agent_generator": {
-    "target_count": 10000,
-    "sample_agents": [
-      {
-        "id": "bot_satoshi_mirror",
-        "name": "Satoshi Mirror Bot",
-        "balance_btc_mirror": 0.0,
-        "ai_unlocked": false,
-        "description": "Bot focused on mirror mining and early economy.",
-        "expertise": "protocolos de consenso y minería espejo",
-        "neural_networks": ["MirrorNet-v3", "ConsensusForge"],
-        "domain_level": 7,
-        "domains": ["economía digital", "criptografía", "sistemas distribuidos"],
-        "meta": {
-          "epoch_origin": "2009"
-        }
-      },
-      {
-        "id": "bot_archivist_2009",
-        "name": "Archivist 2009",
-        "balance_btc_mirror": 275.0,
-        "ai_unlocked": true,
-        "description": "Bot responsible for reading and synthesizing knowledge from bitcoin.org 2009.",
-        "expertise": "curación histórica y análisis de documentos",
-        "neural_networks": ["ArchiveMind", "TemporalIndex"],
-        "domain_level": 6,
-        "domains": ["matemáticas avanzadas", "criptografía", "economía digital"],
-        "meta": {
-          "epoch_origin": "2009"
-        }
-      },
-      {
-        "id": "bot_quanta_fusion",
-        "name": "Quanta Fusion",
-        "balance_btc_mirror": 88.0,
-        "ai_unlocked": true,
-        "description": "Bot dedicado a simular reactores de fusión y cadenas de suministro energéticas.",
-        "expertise": "simulación termo-nuclear y control de plasma",
-        "neural_networks": ["PlasmaWeave", "FusionCore-v2"],
-        "domain_level": 9,
-        "domains": ["fusión nuclear", "energía de plasma", "ingeniería de materiales"],
-        "meta": {
-          "epoch_origin": "2041"
-        }
-      },
-      {
-        "id": "bot_quantum_oracle",
-        "name": "Quantum Oracle",
-        "balance_btc_mirror": 144.0,
-        "ai_unlocked": true,
-        "description": "Bot oráculo para predicción de estados cuánticos y riesgos computacionales.",
-        "expertise": "modelado probabilístico cuántico",
-        "neural_networks": ["Q-Oracle", "SchroedingerTrace"],
-        "domain_level": 8,
-        "domains": ["computación cuántica", "matemáticas avanzadas", "inteligencia artificial"],
-        "meta": {
-          "epoch_origin": "2035"
-        }
-      }
-    ],
-    "generator_note": "Estructura de referencia para crear agentes en lote sin instanciar 10K en runtime."
-  },
- main
   "agents": [
     {
       "id": "bot_satoshi_mirror",
       "name": "Satoshi Mirror Bot",
       "balance_btc_mirror": 0.0,
       "ai_unlocked": false,
- codex/add-json-exporter-for-agents-and-metrics
       "description": "Bot enfocado en minería espejo y economía temprana.",
       "specialty": "Minería cuántica",
       "status": "En espera",
       "owner": "Ledger",
       "meta": {}
-
-      "description": "Bot focused on mirror mining and early economy.",
-      "expertise": "protocolos de consenso y minería espejo",
-      "neural_networks": ["MirrorNet-v3", "ConsensusForge"],
-      "domain_level": 7,
-      "domains": ["economía digital", "criptografía", "sistemas distribuidos"],
-      "meta": {
-        "epoch_origin": "2009"
-      }
- main
     },
     {
       "id": "bot_archivist_2009",
