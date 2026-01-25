@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Satoshi World | Panel Cyberpunk</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#05070c" />
     <style>
       :root {
         color-scheme: dark;
@@ -540,6 +542,9 @@
           <button type="button" class="secondary" id="fullscreen-toggle" aria-pressed="false">
             Entrar en modo pantalla completa
           </button>
+          <button type="button" class="secondary" id="install-app" aria-hidden="true" hidden>
+            Instalar app
+          </button>
           <span class="status-pill neutral" id="fullscreen-status">Pantalla completa: inactiva</span>
         </div>
       </header>
@@ -1042,6 +1047,8 @@
       const tabContents = document.querySelectorAll(".tab-content");
       const fullscreenToggle = document.getElementById("fullscreen-toggle");
       const fullscreenStatus = document.getElementById("fullscreen-status");
+      const installButton = document.getElementById("install-app");
+      let deferredInstallPrompt = null;
 
       const formatAddress = (address) => (address ? `${address.slice(0, 6)}...${address.slice(-4)}` : "—");
       const formatBtc = (value) =>
@@ -1115,6 +1122,17 @@
         fullscreenStatus.textContent = isActive ? "Pantalla completa: activa" : "Pantalla completa: inactiva";
         fullscreenStatus.className = `status-pill ${isActive ? "success" : "neutral"}`;
       };
+ codex/add-pwa-support-with-manifest-and-service-worker
+
+      const setInstallButtonVisible = (visible) => {
+        if (!installButton) {
+          return;
+        }
+        installButton.hidden = !visible;
+        installButton.setAttribute("aria-hidden", String(!visible));
+      };
+
+
  codex/add-button-handlers-for-actions
 
 
@@ -1254,6 +1272,7 @@
         }
       };
 
+ main
  main
       const updateSecurityStatus = () => {
         if (!lockdownStatus) {
@@ -2114,6 +2133,44 @@
         document.addEventListener("fullscreenchange", () => updateFullscreenUI(fullscreenSupported));
         document.addEventListener("fullscreenerror", () => updateFullscreenUI(fullscreenSupported));
       }
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("service-worker.js").catch(() => {
+            setFeedback("No se pudo registrar el service worker.", "warn");
+          });
+        });
+      }
+
+      if (installButton) {
+        installButton.addEventListener("click", async () => {
+          if (!deferredInstallPrompt) {
+            setFeedback("La instalación aún no está disponible.", "warn");
+            return;
+          }
+          deferredInstallPrompt.prompt();
+          const result = await deferredInstallPrompt.userChoice;
+          if (result.outcome === "accepted") {
+            setFeedback("Instalación iniciada. Sigue las instrucciones del navegador.", "success");
+          } else {
+            setFeedback("Instalación cancelada.", "warn");
+          }
+          deferredInstallPrompt = null;
+          setInstallButtonVisible(false);
+        });
+      }
+
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        setInstallButtonVisible(true);
+      });
+
+      window.addEventListener("appinstalled", () => {
+        deferredInstallPrompt = null;
+        setInstallButtonVisible(false);
+        setFeedback("App instalada correctamente.", "success");
+      });
 
       if (window.ethereum) {
         window.ethereum.on("accountsChanged", (accounts) => {
