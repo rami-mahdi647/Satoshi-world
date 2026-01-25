@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Satoshi World | Panel Cyberpunk</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#05070c" />
+    <meta name="background-color" content="#05070c" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon.svg" />
+    <link rel="mask-icon" href="icon-maskable.svg" color="#4ef2ff" />
     <style>
       :root {
         color-scheme: dark;
@@ -1267,7 +1273,6 @@
       updateInfra();
       renderBots();
       renderProjects();
- codex/add-json-exporter-for-agents-and-metrics
       updateTerminal();
       loadLedgerSnapshot();
       setInterval(updateTerminal, 3500);
@@ -1276,7 +1281,14 @@
         updateTerminal();
         setInterval(updateTerminal, 3500);
       });
- main
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("service-worker.js").catch((error) => {
+            console.warn("Service worker registration failed:", error);
+          });
+        });
+      }
     </script>
   </body>
 </html>
