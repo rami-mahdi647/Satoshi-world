@@ -1267,16 +1267,13 @@
       updateInfra();
       renderBots();
       renderProjects();
- codex/add-json-exporter-for-agents-and-metrics
       updateTerminal();
       loadLedgerSnapshot();
       setInterval(updateTerminal, 3500);
 
       loadTerminalLedger().then(() => {
         updateTerminal();
-        setInterval(updateTerminal, 3500);
       });
- main
     </script>
   </body>
 </html>
