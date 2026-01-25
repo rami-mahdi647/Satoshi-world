@@ -1115,6 +1115,8 @@
         fullscreenStatus.textContent = isActive ? "Pantalla completa: activa" : "Pantalla completa: inactiva";
         fullscreenStatus.className = `status-pill ${isActive ? "success" : "neutral"}`;
       };
+ codex/add-button-handlers-for-actions
+
 
       const setOfflineMetrics = () => {
         const offlineValue = "Offline";
@@ -1252,6 +1254,7 @@
         }
       };
 
+ main
       const updateSecurityStatus = () => {
         if (!lockdownStatus) {
           return;
@@ -1875,6 +1878,70 @@
         updateInfra();
       };
 
+      const handleSync = async () => {
+        if (!state.apiBase) {
+          setFeedback("Configura una API para sincronizar la red.", "warn");
+          return;
+        }
+        setFeedback("Sincronizando red cuántica...", "info");
+        try {
+          await apiRequest("/network/sync", { method: "POST" });
+          await loadLedgerSnapshot();
+          await handleActivity();
+          updateInfra();
+          setFeedback("Sincronización completada con éxito.", "success");
+        } catch (error) {
+          setFeedback("No se pudo sincronizar la red en la API.", "warn");
+        }
+      };
+
+      const handleBackup = async () => {
+        if (!state.apiBase) {
+          setFeedback("Configura una API para iniciar el backup.", "warn");
+          return;
+        }
+        setFeedback("Generando backup seguro...", "info");
+        try {
+          await apiRequest("/security/backup", { method: "POST" });
+          updateSecurityStatus();
+          setFeedback("Backup generado y almacenado en la bóveda.", "success");
+        } catch (error) {
+          setFeedback("No se pudo generar el backup en la API.", "warn");
+        }
+      };
+
+      const handleMine = async () => {
+        if (!state.apiBase) {
+          setFeedback("Configura una API para iniciar la minería.", "warn");
+          return;
+        }
+        setFeedback("Iniciando minería cuántica...", "info");
+        try {
+          await apiRequest("/mining/start", { method: "POST" });
+          await loadLedgerSnapshot();
+          updateInfra();
+          setFeedback("Minería activada. Monitoreando rendimiento.", "success");
+        } catch (error) {
+          setFeedback("No se pudo iniciar la minería en la API.", "warn");
+        }
+      };
+
+      const handleOptimize = async () => {
+        if (!state.apiBase) {
+          setFeedback("Configura una API para optimizar la minería.", "warn");
+          return;
+        }
+        setFeedback("Optimizando rigs cuánticos...", "info");
+        try {
+          await apiRequest("/mining/optimize", { method: "POST" });
+          await loadLedgerSnapshot();
+          updateInfra();
+          setFeedback("Optimización aplicada. Rendimiento ajustado.", "success");
+        } catch (error) {
+          setFeedback("No se pudo optimizar la minería en la API.", "warn");
+        }
+      };
+
       const applyLedgerSnapshot = (snapshot) => {
         if (!snapshot || !Array.isArray(snapshot.agents)) {
           return;
@@ -2010,6 +2077,18 @@
           if (action === "lockdown") {
             await handleLockdown();
  main
+          }
+          if (action === "sync") {
+            await handleSync();
+          }
+          if (action === "backup") {
+            await handleBackup();
+          }
+          if (action === "mine") {
+            await handleMine();
+          }
+          if (action === "optimize") {
+            await handleOptimize();
           }
         });
       });
