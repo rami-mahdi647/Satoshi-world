@@ -32,15 +32,7 @@ class UnifiedConfig:
         return merged
        
     def load_config(self) -> Dict:
- codex/define-single-source-of-truth-config-file
         defaults = {
- 
-        config_path = self.root_dir / "Qubist_config.json"
-        if config_path.exists():
-            with open(config_path) as f:
-                return json.load(f)
-        return {
- main
             "python_scripts": {
                 "export_report": "export_report.py",
                 "mirror_miner": "mirror_miner.py",
@@ -117,11 +109,10 @@ class PythonScriptRunner:
         if args is None:
             args = []
            
- codex/define-single-source-of-truth-config-file
-        script_path = self.root / self.config.bridge["python_scripts"].get(script_name)
-
-        script_path = self.root / self.config.config["python_scripts"].get(script_name)
- main
+        script = self.config.bridge["python_scripts"].get(script_name)
+        if not script:
+            return {"error": f"Script {script_name} not found"}
+        script_path = self.root / script
         if not script_path.exists():
             return {"error": f"Script {script_name} not found"}
        
@@ -179,11 +170,7 @@ class QubistCoreInterface:
     def __init__(self, config: UnifiedConfig):
         self.config = config
         self.root = config.root_dir
- codex/define-single-source-of-truth-config-file
         self.qubist_binary = self.root / self.config.bridge["qubist_layer"]["binary"]
-
-        self.qubist_binary = self.root / self.config.config["qubist_core"]
- main
        
     def is_available(self) -> bool:
         """Checks whether the Qubist-C++ core is available"""
