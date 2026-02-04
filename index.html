@@ -613,6 +613,14 @@
                   <label for="api-base">API base (opcional)</label>
                   <input id="api-base" type="url" placeholder="https://api.tuciudad.com" aria-label="API base" />
                   <p class="helper-text">Si defines una API, las acciones se enviarán a producción automáticamente.</p>
+                  <div class="helper-text">
+                    <strong>Contrato API temporal:</strong>
+                    <ul>
+                      <li><code>POST /timemachine/init</code> → carga configuración de caja temporal.</li>
+                      <li><code>POST /timemachine/wormhole</code> → orquesta saltos en el tiempo.</li>
+                      <li><code>POST /timemachine/bind-app</code> → registra apps externas compatibles.</li>
+                    </ul>
+                  </div>
                 </div>
                 <div class="wallet-status" aria-live="polite">
                   <strong>Estado de infraestructura</strong>

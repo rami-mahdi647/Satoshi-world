@@ -11,6 +11,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import argparse
+from urllib.parse import urlparse
+
+from timemachine import TimeMachineConfig, load_timemachine_config
 
 # ==================== UNIFIED CONFIGURATION ====================
 class UnifiedConfig:
@@ -32,15 +35,7 @@ class UnifiedConfig:
         return merged
        
     def load_config(self) -> Dict:
- codex/define-single-source-of-truth-config-file
         defaults = {
- 
-        config_path = self.root_dir / "Qubist_config.json"
-        if config_path.exists():
-            with open(config_path) as f:
-                return json.load(f)
-        return {
- main
             "python_scripts": {
                 "export_report": "export_report.py",
                 "mirror_miner": "mirror_miner.py",
@@ -117,11 +112,10 @@ class PythonScriptRunner:
         if args is None:
             args = []
            
- codex/define-single-source-of-truth-config-file
-        script_path = self.root / self.config.bridge["python_scripts"].get(script_name)
-
-        script_path = self.root / self.config.config["python_scripts"].get(script_name)
- main
+        script = self.config.bridge["python_scripts"].get(script_name)
+        if not script:
+            return {"error": f"Script {script_name} not found"}
+        script_path = self.root / script
         if not script_path.exists():
             return {"error": f"Script {script_name} not found"}
        
@@ -179,11 +173,7 @@ class QubistCoreInterface:
     def __init__(self, config: UnifiedConfig):
         self.config = config
         self.root = config.root_dir
- codex/define-single-source-of-truth-config-file
         self.qubist_binary = self.root / self.config.bridge["qubist_layer"]["binary"]
-
-        self.qubist_binary = self.root / self.config.config["qubist_core"]
- main
        
     def is_available(self) -> bool:
         """Checks whether the Qubist-C++ core is available"""
@@ -248,6 +238,71 @@ class QuantumOrchestrator:
         self.python = PythonScriptRunner(self.config)
         self.qubist = QubistCoreInterface(self.config)
         self.mode = self.config.bridge["quantum_modes"]
+        self.timemachine_config: Optional[TimeMachineConfig] = None
+        self.timemachine_state: Dict[str, Any] = {}
+
+    def init_timemachine(self, config_path: str) -> Dict[str, Any]:
+        """Loads the time machine configuration and initializes a base state."""
+        try:
+            config = load_timemachine_config(config_path)
+        except (FileNotFoundError, ValueError, json.JSONDecodeError) as exc:
+            return {"error": str(exc)}
+
+        base_state = {
+            "timeline_id": config.timeline_id,
+            "snapshot_version": config.snapshot_version,
+            "mode": config.mode,
+            "wormhole_seed": config.wormhole_seed,
+            "app_bindings": config.app_bindings,
+            "initialized_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+        }
+        self.timemachine_config = config
+        self.timemachine_state = base_state
+        return {"success": True, "state": base_state}
+
+    def open_wormhole(self, date: str, url: str, snapshot: Optional[str] = None) -> Dict[str, Any]:
+        """Orchestrates a temporal jump (MVP delegates to retro_pastnet)."""
+        if not self.timemachine_config:
+            return {"error": "Time machine not initialized. Call init_timemachine first."}
+
+        snapshot_id = snapshot or self.timemachine_config.snapshot_version
+        result = self.python.run_retro_pastnet(date, url, wormhole=True)
+        result.update(
+            {
+                "timeline_id": self.timemachine_config.timeline_id,
+                "snapshot_version": snapshot_id,
+                "wormhole_seed": self.timemachine_config.wormhole_seed,
+            }
+        )
+        return result
+
+    def bind_app(self, app_id: str, endpoint: str) -> Dict[str, Any]:
+        """Registers an external app and validates version compatibility."""
+        if not self.timemachine_config:
+            return {"error": "Time machine not initialized. Call init_timemachine first."}
+
+        parsed = urlparse(endpoint)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            return {"error": "Invalid endpoint. Must be an http(s) URL."}
+
+        existing = self.timemachine_config.app_bindings.get(app_id)
+        if existing and existing.get("snapshot_version") != self.timemachine_config.snapshot_version:
+            return {
+                "error": (
+                    "App binding is incompatible with current snapshot version "
+                    f"({existing.get('snapshot_version')} != {self.timemachine_config.snapshot_version})."
+                )
+            }
+
+        binding = {
+            "endpoint": endpoint,
+            "snapshot_version": self.timemachine_config.snapshot_version,
+            "bound_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+        }
+        self.timemachine_config.app_bindings[app_id] = binding
+        if self.timemachine_state:
+            self.timemachine_state["app_bindings"] = self.timemachine_config.app_bindings
+        return {"success": True, "app_id": app_id, "binding": binding}
 
     def export_ledger_snapshot(self, output_path: Optional[str] = None) -> Dict:
         """Exports an agents + metrics snapshot for the frontend."""
