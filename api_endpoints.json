@@ -20,6 +20,16 @@
       "methods": ["GET"],
       "description": "Devuelve actividad reciente de la red, pagos y bots.",
       "response_shape": {"activity": []}
+    },
+    "/timemachine/wormhole": {
+      "methods": ["POST"],
+      "description": "Abre un wormhole temporal con timeline_id, snapshot_version, target_date y origin_url.",
+      "response_shape": {"status": "ok", "wormhole_id": "tm-001"}
+    },
+    "/timemachine/connect": {
+      "methods": ["POST"],
+      "description": "Conecta una app a un wormhole activo usando timeline_id y origin_url.",
+      "response_shape": {"status": "ok", "connection_id": "conn-001"}
     }
   }
 }
