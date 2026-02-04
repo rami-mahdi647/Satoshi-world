@@ -754,28 +754,24 @@
               <article class="panel" aria-labelledby="network-title">
                 <h2 id="network-title">Estado de red</h2>
                 <div class="stat-row">
-                  <span class="stat-label">Latencia</span>
- codex/integrate-network-status-with-api
+                  <span class="stat-label">Latencia (API)</span>
                   <span class="stat-value" id="network-latency">—</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Peers activos</span>
+                  <span class="stat-label">Peers activos (API)</span>
                   <span class="stat-value" id="network-peers">—</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Ancho de banda</span>
-                  <span class="stat-value">—</span>
-
+                  <span class="stat-label">Latencia (métricas)</span>
                   <span class="stat-value" id="metric-network-latency">—</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Peers activos</span>
+                  <span class="stat-label">Peers activos (métricas)</span>
                   <span class="stat-value" id="metric-network-peers">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Ancho de banda</span>
                   <span class="stat-value" id="metric-network-bandwidth">—</span>
- main
                 </div>
                 <button
                   type="button"
@@ -792,28 +788,24 @@
               <article class="panel" aria-labelledby="sync-title">
                 <h2 id="sync-title">Sincronización</h2>
                 <div class="stat-row">
-                  <span class="stat-label">Altura de bloque</span>
- codex/integrate-network-status-with-api
+                  <span class="stat-label">Altura de bloque (API)</span>
                   <span class="stat-value" id="sync-height">—</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Progreso</span>
+                  <span class="stat-label">Progreso (API)</span>
                   <span class="stat-value" id="sync-progress">—</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Tiempo estimado</span>
-                  <span class="stat-value">—</span>
-
+                  <span class="stat-label">Altura de bloque (métricas)</span>
                   <span class="stat-value" id="metric-sync-height">—</span>
                 </div>
                 <div class="stat-row">
-                  <span class="stat-label">Progreso</span>
+                  <span class="stat-label">Progreso (métricas)</span>
                   <span class="stat-value" id="metric-sync-progress">—</span>
                 </div>
                 <div class="stat-row">
                   <span class="stat-label">Tiempo estimado</span>
                   <span class="stat-value" id="metric-sync-eta">—</span>
- main
                 </div>
                 <div class="status-tags">
                   <span class="tag success">Canal cuántico estable</span>
@@ -927,10 +919,8 @@
                     <textarea id="project-code" rows="4" placeholder="// pega tu código aquí"></textarea>
                   </div>
  
-                  <button type="button" data-action="publish-project">Publicar proyecto</button>
-                  <p class="status-message" id="project-status" aria-live="polite"></p>
-
                   <button type="button" data-action="publish-project" data-requires-api="true">Publicar proyecto</button>
+                  <p class="status-message" id="project-status" aria-live="polite"></p>
  
                 </div>
                 <div class="divider"></div>
@@ -969,6 +959,42 @@
                   </button>
                 </div>
                 <p class="helper-text" id="lockdown-status">Lockdown: inactivo</p>
+              </article>
+            </section>
+
+            <section class="grid">
+              <article class="panel" aria-labelledby="timemachine-title">
+                <h2 id="timemachine-title">Timemachine</h2>
+                <p class="callout">
+                  <strong>Secuencia temporal:</strong> define una línea, el snapshot y el origen para abrir un wormhole
+                  controlado. Conecta la app cuando el estado sea estable.
+                </p>
+                <div class="actions">
+                  <div>
+                    <label for="timeline-id">Timeline ID</label>
+                    <input id="timeline-id" type="text" placeholder="timeline-042" />
+                  </div>
+                  <div>
+                    <label for="snapshot-version">Snapshot version</label>
+                    <input id="snapshot-version" type="text" placeholder="v2.3.1" />
+                  </div>
+                  <div>
+                    <label for="target-date">Fecha objetivo</label>
+                    <input id="target-date" type="date" />
+                  </div>
+                  <div>
+                    <label for="origin-url">URL de origen</label>
+                    <input id="origin-url" type="url" placeholder="https://origen.tuapp.com" />
+                  </div>
+                  <div class="inline-actions">
+                    <button type="button" data-action="open-wormhole" data-requires-api="true">Abrir wormhole</button>
+                    <button type="button" class="secondary" data-action="connect-app" data-requires-api="true">
+                      Conectar app
+                    </button>
+                  </div>
+                  <p class="status-message" id="wormhole-status" aria-live="polite"></p>
+                  <p class="status-message" id="connect-status" aria-live="polite"></p>
+                </div>
               </article>
             </section>
           </div>
@@ -1042,6 +1068,11 @@
         lockdown: storage.get("lockdown", false),
       };
 
+      const apiConfig = {
+        baseUrl: "",
+        endpoints: {},
+      };
+
       const apiBaseInput = document.getElementById("api-base");
       const apiStatus = document.getElementById("api-status");
       const walletStatus = document.getElementById("wallet-status");
@@ -1081,6 +1112,12 @@
       const quantumSelect = document.getElementById("quantum");
       const thresholdInput = document.getElementById("threshold");
       const lockdownStatus = document.getElementById("lockdown-status");
+      const timelineIdInput = document.getElementById("timeline-id");
+      const snapshotVersionInput = document.getElementById("snapshot-version");
+      const targetDateInput = document.getElementById("target-date");
+      const originUrlInput = document.getElementById("origin-url");
+      const wormholeStatus = document.getElementById("wormhole-status");
+      const connectStatus = document.getElementById("connect-status");
       const tabButtons = document.querySelectorAll(".tab-button");
       const tabContents = document.querySelectorAll(".tab-content");
       const fullscreenToggle = document.getElementById("fullscreen-toggle");
@@ -1107,6 +1144,31 @@
         }
       };
 
+      const loadApiConfig = async () => {
+        try {
+          const response = await fetch("api_endpoints.json");
+          if (!response.ok) {
+            return;
+          }
+          const config = await response.json();
+          apiConfig.baseUrl = config.base_url ?? "";
+          apiConfig.endpoints = config.endpoints ?? {};
+          if (!state.apiBase && apiConfig.baseUrl) {
+            state.apiBase = apiConfig.baseUrl;
+            apiBaseInput.value = state.apiBase;
+          }
+        } catch (error) {
+          // Optional config file.
+        }
+      };
+
+      const resolveEndpoint = (path) => {
+        if (apiConfig.endpoints && apiConfig.endpoints[path]) {
+          return path;
+        }
+        return null;
+      };
+
       const sanitizeAddressInput = (value) => value.replace(/\s+/g, "");
 
       const isValidAddress = (value) => {
@@ -1117,6 +1179,18 @@
         const ethRegex = /^0x[a-fA-F0-9]{40}$/;
         const satRegex = /^sat:\/\/[a-zA-Z0-9/_-]+$/;
         return ethRegex.test(normalized) || satRegex.test(normalized);
+      };
+
+      const isValidUrl = (value) => {
+        if (!value) {
+          return false;
+        }
+        try {
+          new URL(value);
+          return true;
+        } catch (error) {
+          return false;
+        }
       };
 
       const parseAmount = (value) => {
@@ -1212,7 +1286,6 @@
         fullscreenStatus.textContent = isActive ? "Pantalla completa: activa" : "Pantalla completa: inactiva";
         fullscreenStatus.className = `status-pill ${isActive ? "success" : "neutral"}`;
       };
- codex/add-pwa-support-with-manifest-and-service-worker
 
       const setInstallButtonVisible = (visible) => {
         if (!installButton) {
@@ -1221,11 +1294,6 @@
         installButton.hidden = !visible;
         installButton.setAttribute("aria-hidden", String(!visible));
       };
-
-
- codex/add-button-handlers-for-actions
-
-
       const setOfflineMetrics = () => {
         const offlineValue = "Offline";
         if (metricTotalBalance) {
@@ -1361,9 +1429,6 @@
           metricMiningEfficiency.textContent = mining.efficiency ? `${mining.efficiency}%` : "—";
         }
       };
-
- main
- main
       const updateSecurityStatus = () => {
         if (!lockdownStatus) {
           return;
@@ -1593,17 +1658,6 @@
         if (!state.apiBase) {
           return null;
         }
- codex/document-api-endpoints-and-error-handling
-        const response = await fetch(`${state.apiBase}${path}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          ...options,
-        });
-        if (!response.ok) {
-          const message = await response.text();
-          throw new Error(message || "API error");
-
         try {
           const response = await fetch(`${state.apiBase}${path}`, {
             headers: {
@@ -1612,9 +1666,10 @@
             ...options,
           });
           if (!response.ok) {
-            throw new Error("API error");
+            const message = await response.text();
+            throw new Error(message || "API error");
           }
-          const data = await response.json();
+          const data = await response.json().catch(() => null);
           state.apiOnline = true;
           updateInfra();
           return data;
@@ -1622,7 +1677,6 @@
           state.apiOnline = false;
           updateInfra();
           throw error;
- main
         }
       };
 
@@ -1878,16 +1932,7 @@
             status: state.autopay ? "Auto-pago activo" : "En cola",
             statusClass: state.autopay ? "neutral" : "warn",
           });
- codex/document-api-endpoints-and-error-handling
           setStatus(botStatus, "success", "Bot registrado localmente.");
-
-          if (apiResult) {
-            state.bots = apiResult.bots ?? state.bots;
-          }
-        } catch (error) {
-          alert("No se pudo registrar el bot en la API.");
-          return;
- main
         }
         persist();
         renderBots();
@@ -1931,51 +1976,99 @@
             owner,
             status: "Revisión comunitaria",
           });
- codex/document-api-endpoints-and-error-handling
           setStatus(projectStatus, "success", "Proyecto guardado localmente.");
-
-          if (apiResult) {
-            state.projects = apiResult.projects ?? state.projects;
-          }
-        } catch (error) {
-          alert("No se pudo publicar el proyecto en la API.");
-          return;
- main
         }
         persist();
         renderProjects();
       };
 
-      const handleReceive = async () => {
-        const apiResult = await requestWithStatus(
-          sendStatus,
-          "/wallet/receive",
-          { method: "POST" },
+      const getTimemachinePayload = () => {
+        const timelineId = timelineIdInput?.value.trim();
+        const snapshotVersion = snapshotVersionInput?.value.trim();
+        const targetDate = targetDateInput?.value;
+        const originUrl = originUrlInput?.value.trim();
+        return {
+          timeline_id: timelineId,
+          snapshot_version: snapshotVersion,
+          target_date: targetDate,
+          origin_url: originUrl,
+        };
+      };
+
+      const handleOpenWormhole = async () => {
+        if (!ensureApiOnline("Timemachine")) {
+          return;
+        }
+        const endpoint = resolveEndpoint("/timemachine/wormhole");
+        if (!endpoint) {
+          setStatus(wormholeStatus, "error", "Endpoint de wormhole no definido en api_endpoints.json.");
+          return;
+        }
+        const payload = getTimemachinePayload();
+        if (!payload.timeline_id || !payload.snapshot_version || !payload.target_date || !payload.origin_url) {
+          setStatus(wormholeStatus, "error", "Completa todos los campos para abrir el wormhole.");
+          return;
+        }
+        if (!isValidUrl(payload.origin_url)) {
+          setStatus(wormholeStatus, "error", "La URL de origen no es válida.");
+          return;
+        }
+        const result = await requestWithStatus(
+          wormholeStatus,
+          endpoint,
           {
-            loading: "Generando recepción...",
-            success: "Dirección de recepción generada.",
-            error: "No se pudo generar la dirección de recepción.",
-            missing: "Configura una API base para generar la recepción.",
+            method: "POST",
+            body: JSON.stringify(payload),
+          },
+          {
+            loading: "Abriendo wormhole temporal...",
+            success: "Wormhole abierto y estable.",
+            error: "No se pudo abrir el wormhole.",
           },
         );
-        if (apiResult?.address) {
-          const input = document.getElementById("send-to");
-          input.value = apiResult.address;
+        if (result?.wormhole_id) {
+          setStatus(wormholeStatus, "success", `Wormhole activo: ${result.wormhole_id}`);
         }
       };
 
-      const handleActivity = async () => {
-        await requestWithStatus(
-          activityStatus,
-          "/activity",
-          { method: "GET" },
+      const handleConnectApp = async () => {
+        if (!ensureApiOnline("Conexión de app")) {
+          return;
+        }
+        const endpoint = resolveEndpoint("/timemachine/connect");
+        if (!endpoint) {
+          setStatus(connectStatus, "error", "Endpoint de conexión no definido en api_endpoints.json.");
+          return;
+        }
+        const payload = getTimemachinePayload();
+        if (!payload.timeline_id || !payload.origin_url) {
+          setStatus(connectStatus, "error", "Define el timeline y la URL de origen para conectar.");
+          return;
+        }
+        if (!isValidUrl(payload.origin_url)) {
+          setStatus(connectStatus, "error", "La URL de origen no es válida.");
+          return;
+        }
+        const result = await requestWithStatus(
+          connectStatus,
+          endpoint,
           {
-            loading: "Cargando actividad...",
-            success: "Actividad actualizada.",
-            error: "No se pudo cargar la actividad.",
-            missing: "Configura una API base para ver la actividad.",
+            method: "POST",
+            body: JSON.stringify({
+              timeline_id: payload.timeline_id,
+              origin_url: payload.origin_url,
+              snapshot_version: payload.snapshot_version,
+            }),
+          },
+          {
+            loading: "Enlazando app al wormhole...",
+            success: "App conectada al flujo temporal.",
+            error: "No se pudo conectar la app.",
           },
         );
+        if (result?.connection_id) {
+          setStatus(connectStatus, "success", `Conexión activa: ${result.connection_id}`);
+        }
       };
 
       const handleAutoPay = () => {
@@ -2139,6 +2232,8 @@
               "deploy-bot": "Despliegue de bots",
               "toggle-autopay": "Auto-pago",
               "save-settings": "Configuración avanzada",
+              "open-wormhole": "Timemachine",
+              "connect-app": "Conexión de app",
               export: "Exportación",
               lockdown: "Lockdown",
               "publish-project": "Publicación de proyectos",
@@ -2171,22 +2266,20 @@
           if (action === "toggle-autopay") {
             handleAutoPay();
           }
- codex/document-api-endpoints-and-error-handling
-          if (action === "receive") {
-            handleReceive();
-          }
-          if (action === "activity") {
-            handleActivity();
-
           if (action === "save-settings") {
             await handleSaveSettings();
+          }
+          if (action === "open-wormhole") {
+            await handleOpenWormhole();
+          }
+          if (action === "connect-app") {
+            await handleConnectApp();
           }
           if (action === "export") {
             await handleExport();
           }
           if (action === "lockdown") {
             await handleLockdown();
- main
           }
           if (action === "sync") {
             await handleSync();
@@ -2275,29 +2368,22 @@
         });
       }
 
-      updateInfra();
-      updateSecurityStatus();
-      renderBots();
-      renderProjects();
- codex/document-api-endpoints-and-error-handling
-      updateTerminal();
-      loadLedgerSnapshot();
- codex/integrate-network-status-with-api
-      setInterval(updateTerminal, 3500);
-      loadNetworkStatus();
-      setInterval(loadNetworkStatus, 30000);
-
-
- main
-      loadTerminalLedger().then(() => {
+      const initialize = async () => {
+        await loadApiConfig();
+        updateInfra();
+        updateSecurityStatus();
+        renderBots();
+        renderProjects();
+        await loadTerminalLedger();
         updateTerminal();
+        await refreshDashboard();
+        loadNetworkStatus();
         setInterval(updateTerminal, 3500);
-      });
+        setInterval(refreshDashboard, 30000);
+        setInterval(loadNetworkStatus, 30000);
+      };
 
-      refreshDashboard();
-      setInterval(updateTerminal, 3500);
-      setInterval(refreshDashboard, 30000);
- main
+      initialize();
     </script>
   </body>
 </html>
