@@ -20,6 +20,24 @@
       "methods": ["GET"],
       "description": "Devuelve actividad reciente de la red, pagos y bots.",
       "response_shape": {"activity": []}
+    },
+    "/timemachine/init": {
+      "methods": ["POST"],
+      "description": "Inicializa la caja temporal con un archivo de configuración.",
+      "request_shape": {"config_path": "timemachine.json"},
+      "response_shape": {"success": true, "state": {"timeline_id": "string"}}
+    },
+    "/timemachine/wormhole": {
+      "methods": ["POST"],
+      "description": "Orquesta un salto temporal (MVP delega en retro_pastnet).",
+      "request_shape": {"date": "YYYY-MM-DD", "url": "https://example.com", "snapshot": "optional"},
+      "response_shape": {"success": true, "snapshot_version": "string", "stdout": "string"}
+    },
+    "/timemachine/bind-app": {
+      "methods": ["POST"],
+      "description": "Registra una app externa compatible con la versión del snapshot.",
+      "request_shape": {"app_id": "app_identifier", "endpoint": "https://app.example.com"},
+      "response_shape": {"success": true, "binding": {"endpoint": "string"}}
     }
   }
 }
