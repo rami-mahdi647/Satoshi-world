@@ -1,6 +1,19 @@
 # Satoshi Mirror Quantum Bridge
 
-This repository contains the unified bridge between Python scripts and the Qubist-C++ core for Satoshi Mirror. Below are usage examples and real code excerpts so GitHub highlights syntax appropriately.
+Satoshi Mirror is a hybrid system that fuses a Python orchestration layer with a Qubist-C++ core to prototype
+disruptive technical innovations in decentralized computation. The repository blends experimental blockchain
+mining, quantum-inspired hashing, and autonomous agent telemetry into a single, extensible stack.
+
+## Disruptive innovation themes
+
+- **Quantum-inspired security primitives**: the Qubist-C++ core models quantum-secure key generation and hashing
+  to explore post-classical blockchain resilience.
+- **Autonomous agent orchestration**: Python services run mining, ledger export, and system telemetry pipelines to
+  simulate self-governing network behavior.
+- **Unified pipeline for data + UI**: the ledger snapshot feeds a static frontend, proving a frictionless bridge
+  between simulation and visualization.
+- **Composable API surface**: the panel endpoints document how external services can inject bots, projects, and
+  wallet activity into the mirror network.
 
 ## Quick deploy (bash)
 
@@ -17,28 +30,29 @@ python3 Satoshi_mirror.py mine 5
 python3 Satoshi_mirror.py quantum-synthesis
 ```
 
-## Snapshot del ledger para frontend
+## Ledger snapshot for the frontend
 
-El frontend (`index.html`) consume un snapshot JSON con agentes y métricas desde el mismo hosting estático. Para regenerarlo en producción, ejecuta:
+The frontend (`index.html`) consumes a JSON snapshot with agents and metrics from static hosting. To regenerate it in
+production, run:
 
 ```bash
 python3 Satoshi_mirror.py export-ledger
 ```
 
-El comando sobrescribe/crea `agents_ledger.json` en el directorio raíz, listo para ser servido junto a `index.html`.
+The command overwrites/creates `agents_ledger.json` in the project root, ready to be served alongside `index.html`.
 
-## Endpoints esperados para el panel
+## Expected panel endpoints
 
-El panel web (`index.html`) puede integrarse con una API externa. La configuración esperada de endpoints está
-documentada en `api_endpoints.json` e incluye rutas como:
+The web panel (`index.html`) can integrate with an external API. The expected endpoint configuration is documented
+in `api_endpoints.json` and includes routes like:
 
-- `GET/POST /bots` — registro y listado de bots activos.
-- `GET/POST /projects` — publicación y listado de proyectos comunitarios.
-- `POST /wallet/receive` — generación de dirección/QR de recepción.
-- `GET /activity` — actividad reciente (pagos, misiones, bots).
+- `GET/POST /bots` — register and list active bots.
+- `GET/POST /projects` — publish and list community projects.
+- `POST /wallet/receive` — generate receive address/QR.
+- `GET /activity` — recent activity (payments, missions, bots).
 
-Puedes servir la API en un dominio propio y configurar su base en el campo “API base” del panel. El frontend usa
-estas rutas para registrar bots, publicar proyectos y consultar actividad.
+You can serve the API on a custom domain and configure its base in the panel’s “API base” field. The frontend uses
+these routes to register bots, publish projects, and query activity.
 
 ## Python usage (Python)
 
